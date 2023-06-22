@@ -1,0 +1,52 @@
+.task-area-header {
+    margin-top: 20px;
+
+    .header-today {
+        .date-today {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+
+            .title {
+                font-size: 17px;
+                letter-spacing: .4px;
+            }
+        }
+
+        .description {
+            font-size: 12px;
+            color: #878787;
+        }
+
+        .new-task {
+            display: flex;
+            margin-top: 20px;
+            gap : 6px;
+            align-items: center;
+            cursor: pointer;
+
+            .new-task-icon {
+                color :  rgb(219, 76, 63);
+
+            }
+
+            .add-label {
+                font-size: 14px;
+            }
+
+            &:hover {
+
+                .new-task-icon {
+                    background-color:  rgb(219, 76, 63);
+                    color :white;
+                    border-radius: 50%;
+                }
+
+                .add-label {
+                    font-size: 14px;
+                    color :rgb(219, 76, 63);
+                }
+            }
+        }
+    }
+}

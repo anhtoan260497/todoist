@@ -9,16 +9,24 @@ import {
   SearchOutlined,
 } from "@ant-design/icons";
 import clsx from 'clsx'
+import { useDispatch, useSelector } from "react-redux";
+import { setActiveMenu } from "../../features/menu/menuSlice";
 
 
 function Header() {
 
   const [isExpandSearch, setIsExpandSearch] = useState(false)
+  const isActiveMenu = useSelector(state => state.menuReducer.isActiveMenu)
+  const dispatch = useDispatch()
+
+  const handleClickMenuIcon = () => {
+    dispatch(setActiveMenu(!isActiveMenu))
+  }
 
   return (
     <div className="header-container">
       <div className="left-header-container">
-        <MenuFoldOutlined className="header-icon" />
+        <MenuFoldOutlined className="header-icon" onClick={() => handleClickMenuIcon()} />
         <HomeOutlined className="header-icon" />
         <div className="search-area">
           <SearchOutlined className="search-icon" />
