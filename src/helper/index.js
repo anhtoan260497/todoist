@@ -20,6 +20,5 @@ export function customRegex(value, option) {
             regex: /^\d{4}$/g,
         }
     }
-    console.log(options[option].regex)
     return testRegex(value, options[option].regex)
 }

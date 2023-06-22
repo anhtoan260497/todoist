@@ -25,7 +25,7 @@ function Login({ isLogin }) {
   return (
     <div className="login-container">
       <div className="left-form">
-        <img src={process.env.PUBLIC_URL + "/svg/icon.svg"} alt="" />
+        <img className="logo" src={process.env.PUBLIC_URL + "/svg/icon.svg"} alt="" />
 
         <div className="login-area">
           <Title level={2}>{!isLogin ? "Sign up" : "Login"}</Title>
@@ -82,11 +82,11 @@ function Login({ isLogin }) {
         <p className="login-more">
           {!isLogin ? (
             <>
-              `Already signed up? <Link to={`/${login}`}>Sign up</Link>{" "}
+              Already signed up? <Link to={`/${login}`}>Go to login</Link>{" "}
             </>
           ) : (
             <>
-              `Don’t have an account? <Link to={`/${signup}`}>Go to login</Link>
+              Don’t have an account? <Link to={`/${signup}`}>Sign up</Link>
             </>
           )}
         </p>
