@@ -82,11 +82,11 @@ function Login({ isLogin }) {
         <p className="login-more">
           {!isLogin ? (
             <>
-              Already signed up? <Link to={`/${login}`}>Go to login</Link>{" "}
+              Already signed up? <Link to={`/auth/${login}`}>Go to login</Link>{" "}
             </>
           ) : (
             <>
-              Don’t have an account? <Link to={`/${signup}`}>Sign up</Link>
+              Don’t have an account? <Link to={`/auth/${signup}`}>Sign up</Link>
             </>
           )}
         </p>

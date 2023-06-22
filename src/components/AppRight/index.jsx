@@ -5,6 +5,7 @@ import { useSelector } from "react-redux";
 import clsx from "clsx";
 import EmptyTaskToday from "../EmptyTaskToday";
 import TaskAreaHeader from "../TaskAreaHeader";
+import { Outlet, Route, Routes } from "react-router-dom";
 
 AppRight.propTypes = {};
 
@@ -20,7 +21,9 @@ function AppRight() {
       )}
     >
       <TaskAreaHeader />
-      <EmptyTaskToday />
+
+      <Outlet />
+     
     </div>
   );
 }

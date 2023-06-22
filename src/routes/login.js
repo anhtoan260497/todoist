@@ -1,6 +1,7 @@
 const loginRoute = {
-    signup : 'auth/singup',
-    login : 'auth/login'
+    authIndex : 'auth/*',
+    signup : 'signup',
+    login : 'login'
 }
 
 export default loginRoute
