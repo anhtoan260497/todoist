@@ -1,0 +1,28 @@
+.no-task-display {
+    width: 100%;
+    text-align: center;
+    min-height: 94vh;
+    margin-top: 20px;
+
+    img {
+        width: 300px;
+        margin :auto;
+    }
+
+    .description-no-task {
+        width: 300px;
+        margin: auto;
+
+    }
+
+    .description-bold {
+        font-weight: 600;
+        font-size: 17px;
+        margin : 10px auto ;
+    }
+
+    .description-light {
+        font-size: 14px;
+        color: #636363;
+    }
+}
