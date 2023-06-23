@@ -1,6 +1,7 @@
 const appRoute = {
     appIndex : 'app/*',
-    today : 'today'
+    today : 'today',
+    upcoming: 'upcoming'
 }
 
 export default appRoute

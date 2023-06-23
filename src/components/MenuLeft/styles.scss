@@ -37,10 +37,8 @@
         cursor: pointer;
         border-radius: 5px;
         padding : 0 5px;
-
-        .active-link{
-            background-color: #eaeaea;
-        }
+        text-decoration: none;
+        color:black;
 
         &:hover {
             background-color: #eaeaea;
@@ -75,6 +73,10 @@
             font-size: 13px;
             color : #9c9c9c
         }
+    }
+
+    .active-link{
+        background-color: #eaeaea;
     }
 
 }

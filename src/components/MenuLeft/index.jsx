@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 import "./styles.scss";
 import ProjectItem from "../ProjectItem";
 import {
@@ -8,39 +8,53 @@ import {
 } from "@ant-design/icons";
 import clsx from "clsx";
 import { useSelector } from "react-redux";
+import AddProjectModal from "../AddProjectModal";
+import { Link, useParams } from "react-router-dom";
+import appRoute from "../../routes/app";
 
 MenuLeft.propTypes = {};
 
+const {today, upcoming} = appRoute
+
 function MenuLeft() {
   const isActiveMenu = useSelector((state) => state.menuReducer.isActiveMenu);
+  const [isOpenProjectModal,setIsOpenProjectModal] = useState(false)  // open add project modal 
+  const params = useParams()
+
+  const isCurrentRoute = (path) =>  params['*'].includes(path)
+  
+
+
 
   return (
     <div
       className={clsx("menu-left-container", !isActiveMenu && "no-active-menu")}
     >
       <div className="menu-navigate">
-        <div className="navigate-item">
+        <Link to={today} className={clsx('navigate-item', isCurrentRoute(today) && 'active-link')}>
           <div className="navigate-description">
             <CalendarOutlined className="navigate-icon today-icon" />
             <p>Today</p>
           </div>
           <p className="navigate-item-count">2</p>
-        </div>
-        <div className="navigate-item">
+        </Link>
+        <Link to={upcoming} className={clsx('navigate-item', isCurrentRoute(upcoming) && 'active-link')} >
           <div className="navigate-description">
             <UnorderedListOutlined className="navigate-icon upcoming-icon" />
             <p>Upcoming</p>
           </div>
           <p className="navigate-item-count">2</p>
-        </div>
+        </Link>
       </div>
       <div className="menu-left-title">
         Projects
-        <PlusOutlined className="header-icon" />
+        <PlusOutlined className="header-icon" onClick={()=>setIsOpenProjectModal(true)}/>
       </div>
       <ul className="list-project-container">
         <ProjectItem color="blue" quantity={2} title="helelo" />
       </ul>
+
+      <AddProjectModal isOpenProjectModal={isOpenProjectModal} setIsOpenProjectModal={setIsOpenProjectModal}/>
     </div>
   );
 }
