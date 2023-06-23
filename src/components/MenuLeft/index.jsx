@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React from "react";
 import "./styles.scss";
 import ProjectItem from "../ProjectItem";
 import {
@@ -7,25 +7,24 @@ import {
   UnorderedListOutlined,
 } from "@ant-design/icons";
 import clsx from "clsx";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import AddProjectModal from "../AddProjectModal";
 import { Link, useParams } from "react-router-dom";
 import appRoute from "../../routes/app";
+import { toggleModalAddProject } from "../../features/modal/modalSlice";
 
 MenuLeft.propTypes = {};
 
 const {today, upcoming} = appRoute
 
 function MenuLeft() {
+  
   const isActiveMenu = useSelector((state) => state.menuReducer.isActiveMenu);
-  const [isOpenProjectModal,setIsOpenProjectModal] = useState(false)  // open add project modal 
   const params = useParams()
+  const dispatch = useDispatch()
 
   const isCurrentRoute = (path) =>  params['*'].includes(path)
   
-
-
-
   return (
     <div
       className={clsx("menu-left-container", !isActiveMenu && "no-active-menu")}
@@ -48,13 +47,13 @@ function MenuLeft() {
       </div>
       <div className="menu-left-title">
         Projects
-        <PlusOutlined className="header-icon" onClick={()=>setIsOpenProjectModal(true)}/>
+        <PlusOutlined className="header-icon" onClick={()=>dispatch(toggleModalAddProject(true))}/>
       </div>
       <ul className="list-project-container">
         <ProjectItem color="blue" quantity={2} title="helelo" />
       </ul>
 
-      <AddProjectModal isOpenProjectModal={isOpenProjectModal} setIsOpenProjectModal={setIsOpenProjectModal}/>
+      <AddProjectModal/>
     </div>
   );
 }
