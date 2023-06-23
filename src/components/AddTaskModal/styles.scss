@@ -1,0 +1,32 @@
+.task-name-input {
+    width: 100%;
+    padding : 5px 10px 10px 0;
+    font-size: 23px;
+    font-weight: 500;
+    border:none;
+    outline : none;
+}
+
+.task-description-input {
+    width: 100%;
+    padding : 5px 10px 10px 0;
+    font-size: 14px;
+    color : #838383;
+    border:none;
+    outline : none;
+    font-weight: 100;
+    margin: 0 0 15px 0;
+}
+
+.more-task-options {
+    display: flex;
+    gap : 10px;
+    align-items: center;
+
+    .date-picker,.select-picker {
+        width: 115px;
+        height: 30px;
+        cursor: pointer;
+    }
+
+}

@@ -1,22 +1,22 @@
-import React, { useCallback, useEffect, useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import React, { useCallback, useState } from "react";
 import { ColorPicker, Modal, Switch } from "antd";
 import "./styles.scss";
-
-AddProjectModal.propTypes = {
-  isOpenProjectModal: PropTypes.bool.isRequired,
-};
+import { useDispatch, useSelector } from "react-redux";
+import { toggleModalAddProject } from "../../features/modal/modalSlice";
 
 function AddProjectModal({ isOpenProjectModal, setIsOpenProjectModal }) {
   const [color,setColor] = useState([0,0,0]) // red,green,blue
   const [name,setName] = useState('')
   const [isCheckFavorites,setIsCheckFavorites] = useState(false)
+  const isShowModalAddProject =  useSelector(state => state.modalReducer.isShowModalAddProject)
+
+  const dispatch = useDispatch()
 
   const submitProject = () => {
     console.log(color,name)
     setColor([0,0,0])
     setName('')
-    setIsOpenProjectModal(false)
+    dispatch(toggleModalAddProject(false))
   };
 
   const handleChangeColor = useCallback((color) => {
@@ -38,9 +38,9 @@ function AddProjectModal({ isOpenProjectModal, setIsOpenProjectModal }) {
       <Modal
         title="Add Project"
         closable={false}
-        open={isOpenProjectModal}
+        open={isShowModalAddProject}
         onOk={() => submitProject("hi")}
-        onCancel={() => setIsOpenProjectModal(false)}
+        onCancel={() => dispatch(toggleModalAddProject(false))}
         okButtonProps={{disabled : name.length === 0}}
       
       >

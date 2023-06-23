@@ -3,12 +3,13 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 import { PlusOutlined } from "@ant-design/icons";
 import AddTaskModal from "../AddTaskModal";
+import { useDispatch, useSelector } from "react-redux";
+import { toggleModalAddTask } from "../../features/modal/modalSlice";
 
 TaskAreaHeader.propTypes = {};
 
 function TaskAreaHeader() {
-
-  const [isShowAddTaskModal,setIsShowAddTaskModal] = useState(false)
+  const dispatch = useDispatch()
 
   return (
     <div className="task-area-header">
@@ -17,12 +18,12 @@ function TaskAreaHeader() {
           <h3 className="title">Today</h3>
           <p  className="description">Fri 23 Jun</p>
         </div>
-        <div className="new-task" onClick={() => setIsShowAddTaskModal(true)}>
+        <div className="new-task" onClick={() => dispatch(toggleModalAddTask(true))}>
           <PlusOutlined className="new-task-icon" />
           <p className="description add-label">Add Task</p>
         </div>
       </div>
-      <AddTaskModal isShowAddTaskModal={isShowAddTaskModal} setIsShowAddTaskModal={setIsShowAddTaskModal} />
+      <AddTaskModal />
     </div>
   );
 }

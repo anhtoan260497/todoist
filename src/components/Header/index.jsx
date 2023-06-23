@@ -11,6 +11,7 @@ import {
 import clsx from 'clsx'
 import { useDispatch, useSelector } from "react-redux";
 import { setActiveMenu } from "../../features/menu/menuSlice";
+import { toggleModalAddTask } from "../../features/modal/modalSlice";
 
 
 function Header() {
@@ -37,7 +38,7 @@ function Header() {
       </div>
 
       <div className="right-header-container">
-        <PlusOutlined className="header-icon" />
+        <PlusOutlined className="header-icon" onClick={() => dispatch(toggleModalAddTask(true))} />
         <div className="profile-avatar">
             b
         </div>
