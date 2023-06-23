@@ -1,0 +1,35 @@
+.input-field {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    margin: 10px 0;
+
+    .name {
+        width: 100%;
+        p {
+            font-size: 16px;
+            font-weight: 500;
+        }
+
+        input {
+            height: 28.5px;
+            width: 100%;
+            border-radius: 5px;
+            outline : none;
+            border:1px solid #bdbdbd;
+            margin-top : 5px;
+            padding : 5px;
+        }
+    }
+}
+
+.switch-area {
+    display: flex;
+    align-items: center;
+    gap : 10px;
+}
+
+.ant-btn-primary {
+    background-color: rgb(219, 76, 63);
+}

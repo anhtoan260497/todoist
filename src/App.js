@@ -8,7 +8,7 @@ import EmptyTaskToday from "./components/EmptyTaskToday";
 import TaskList from "./components/TaskList";
 
 const { authIndex, signup, login } = loginRoute;
-const { appIndex, today } = appRoute;
+const { appIndex, today,upcoming } = appRoute;
 
 function App() {
   return (
@@ -20,6 +20,7 @@ function App() {
         </Route>
         <Route path={appIndex} element={<AppHome />}>
           <Route path={today} element={<TaskList />} />
+          <Route path={upcoming} element={<TaskList />} />
           <Route path="*" element={<Navigate replace to={today} />} />
         </Route>
         <Route path="*" element={<Navigate replace to={`auth/${login}`} />} />
