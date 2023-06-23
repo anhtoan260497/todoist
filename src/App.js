@@ -5,6 +5,7 @@ import loginRoute from "./routes/login";
 import appRoute from "./routes/app";
 import AppHome from "./pages/AppHome";
 import EmptyTaskToday from "./components/EmptyTaskToday";
+import TaskList from "./components/TaskList";
 
 const { authIndex, signup, login } = loginRoute;
 const { appIndex, today } = appRoute;
@@ -18,7 +19,8 @@ function App() {
           <Route path={signup} element={<Login isLogin={false} />} />
         </Route>
         <Route path={appIndex} element={<AppHome />}>
-          <Route path={today} element={<EmptyTaskToday />} />
+          <Route path={today} element={<TaskList />} />
+          <Route path="*" element={<Navigate replace to={today} />} />
         </Route>
         <Route path="*" element={<Navigate replace to={`auth/${login}`} />} />
       </Routes>
