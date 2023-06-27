@@ -6,6 +6,9 @@ import { useForm } from "react-hook-form";
 import { Link } from "react-router-dom";
 import loginRoute from "../../routes/login";
 import { customRegex } from "../../helper";
+import axios from "axios";
+import loginAPI from "../../api/loginAPI";
+const qs = require("qs");
 
 const { Title } = Typography;
 const { signup, login } = loginRoute;
@@ -13,19 +16,35 @@ const { signup, login } = loginRoute;
 Login.propTypes = {
   isLogin: PropTypes.bool.isRequired,
 };
-
 function Login({ isLogin }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = (data) => console.log(data);
+  const onSubmit = async (data) => {
+    try {
+      let loginData = {
+        email: data.email,
+        password: data.password,
+      };
+      const res = await loginAPI.login(loginData);
+      if(res.loggedIn) {
+        
+      }
+    } catch (err) {
+      console.log(err);
+    }
+  };
 
   return (
     <div className="login-container">
       <div className="left-form">
-        <img className="logo" src={process.env.PUBLIC_URL + "/svg/icon.svg"} alt="" />
+        <img
+          className="logo"
+          src={process.env.PUBLIC_URL + "/svg/icon.svg"}
+          alt=""
+        />
 
         <div className="login-area">
           <Title level={2}>{!isLogin ? "Sign up" : "Login"}</Title>
@@ -34,7 +53,10 @@ function Login({ isLogin }) {
               <label>Email</label>
               <input
                 className="input-field"
-                {...register("email", { required: true,validate:(value => customRegex(value,'email')) })}
+                {...register("email", {
+                  required: true,
+                  validate: (value) => customRegex(value, "email"),
+                })}
                 placeholder="Enter your email..."
               />
               {errors.email && <p className="form-error">Email is required</p>}
@@ -44,7 +66,11 @@ function Login({ isLogin }) {
               <label>Password</label>
               <input
                 className="input-field"
-                {...register("password", { required: true,minLength: 8,maxLength : 60 })}
+                {...register("password", {
+                  required: true,
+                  minLength: 8,
+                  maxLength: 60,
+                })}
                 type="password"
                 placeholder="Enter your password..."
               />
@@ -62,7 +88,7 @@ function Login({ isLogin }) {
           </form>
         </div>
 
-        <div class="term">
+        <div className="term">
           By continuing with Email, you agree to Todoist’s <br />
           <a href="https://todoist.com/terms" target="_blank" rel="noreferrer">
             Terms of Service
@@ -71,7 +97,8 @@ function Login({ isLogin }) {
           <a
             href="https://todoist.com/privacy"
             target="_blank"
-            rel="noreferrer">
+            rel="noreferrer"
+          >
             Privacy Policy
           </a>
           .

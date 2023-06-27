@@ -45,6 +45,14 @@ function MenuLeft() {
           <p className="navigate-item-count">2</p>
         </Link>
       </div>
+
+      <div className="menu-left-title">
+        Favorites
+      </div>
+      <ul className="list-project-container">
+        <ProjectItem color="blue" quantity={2} title="helelo" />
+      </ul>
+
       <div className="menu-left-title">
         Projects
         <PlusOutlined className="header-icon" onClick={()=>dispatch(toggleModalAddProject(true))}/>

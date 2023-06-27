@@ -1,3 +1,5 @@
+import Cookies from 'js-cookies'
+
 function testRegex(value, regex) {
     return regex.test(value)
 }
@@ -21,4 +23,13 @@ export function customRegex(value, option) {
         }
     }
     return testRegex(value, options[option].regex)
+}
+
+
+export const setCookies = (key,value) => {
+    Cookies.setItem(key,value)
+}
+
+export const getCookies = (key) => {
+    Cookies.getItem(key)
 }
