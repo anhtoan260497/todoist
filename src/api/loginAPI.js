@@ -4,6 +4,10 @@ const loginAPI = {
     login : ({email, password}) => {
         const url = `account/login`
         return axiosClient.post(url,{email,password})
+    },
+    checkLoggedIn : token => {
+        const url = `account/logged`
+        return axiosClient.post(url,{token})
     }
 }
 
