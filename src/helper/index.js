@@ -31,5 +31,5 @@ export const setCookies = (key,value) => {
 }
 
 export const getCookies = (key) => {
-    Cookies.getItem(key)
+     return Cookies.getItem(key)
 }

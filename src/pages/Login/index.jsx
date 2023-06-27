@@ -3,12 +3,10 @@ import PropTypes from "prop-types";
 import "./styles.scss";
 import { Typography } from "antd";
 import { useForm } from "react-hook-form";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import loginRoute from "../../routes/login";
-import { customRegex } from "../../helper";
-import axios from "axios";
+import { customRegex, setCookies } from "../../helper";
 import loginAPI from "../../api/loginAPI";
-const qs = require("qs");
 
 const { Title } = Typography;
 const { signup, login } = loginRoute;
@@ -17,6 +15,9 @@ Login.propTypes = {
   isLogin: PropTypes.bool.isRequired,
 };
 function Login({ isLogin }) {
+
+  const navigate = useNavigate()
+
   const {
     register,
     handleSubmit,
@@ -30,7 +31,8 @@ function Login({ isLogin }) {
       };
       const res = await loginAPI.login(loginData);
       if(res.loggedIn) {
-        
+        setCookies('token',res.token)
+        navigate('/app/today')
       }
     } catch (err) {
       console.log(err);

@@ -1,4 +1,4 @@
-import { Navigate, Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import "./App.css";
 import Login from "./pages/Login";
 import loginRoute from "./routes/login";
@@ -6,11 +6,29 @@ import appRoute from "./routes/app";
 import AppHome from "./pages/AppHome";
 import EmptyTaskToday from "./components/EmptyTaskToday";
 import TaskList from "./components/TaskList";
+import { useEffect } from "react";
+import loginAPI from "./api/loginAPI";
+import { getCookies } from "./helper";
 
 const { authIndex, signup, login } = loginRoute;
-const { appIndex, today,upcoming } = appRoute;
+const { appIndex, today, upcoming } = appRoute;
 
 function App() {
+
+  const navigate = useNavigate()
+
+  useEffect(() => {
+    const checkLoggedIn = async () => {
+      try {
+        const res = await loginAPI.checkLoggedIn(getCookies("token"));
+        if (res.loggedIn) navigate(`app/${today}`)
+      } catch (err) {
+        navigate(`auth/${login}`)
+      }
+    };
+    checkLoggedIn();
+  }, [navigate]);
+
   return (
     <div className="App">
       <Routes>
