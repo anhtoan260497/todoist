@@ -12,7 +12,7 @@ function AppHome() {
     <Layout>
       <div className="app-home-ui">
         <MenuLeft />
-
+        
         <AppRight />
       </div>
     </Layout>

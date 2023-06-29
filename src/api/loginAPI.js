@@ -2,7 +2,7 @@ import axiosClient from "./aixosClient"
 
 const loginAPI = {
     login : ({email, password}) => {
-        const url = `account/login`
+        const url = `auth/login`
         return axiosClient.post(url,{email,password})
     },
     checkLoggedIn : token => {

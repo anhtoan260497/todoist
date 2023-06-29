@@ -15,6 +15,7 @@ import { toggleModalAddProject } from "../../features/modal/modalSlice";
 
 MenuLeft.propTypes = {};
 
+
 const {today, upcoming} = appRoute
 
 function MenuLeft() {
