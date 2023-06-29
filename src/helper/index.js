@@ -33,3 +33,8 @@ export const setCookies = (key,value) => {
 export const getCookies = (key) => {
      return Cookies.getItem(key)
 }
+
+
+export function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1);
+}

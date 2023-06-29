@@ -7,6 +7,7 @@ import { Link, useNavigate } from "react-router-dom";
 import loginRoute from "../../routes/login";
 import { customRegex, setCookies } from "../../helper";
 import loginAPI from "../../api/loginAPI";
+import SocialLoginButton from "../../components/SocialLoginButton";
 
 const { Title } = Typography;
 const { signup, login } = loginRoute;
@@ -50,6 +51,9 @@ function Login({ isLogin }) {
 
         <div className="login-area">
           <Title level={2}>{!isLogin ? "Sign up" : "Login"}</Title>
+          <SocialLoginButton type="facebook" />
+          <SocialLoginButton type="google"/>
+          <SocialLoginButton type="apple"/>
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="input-area">
               <label>Email</label>
