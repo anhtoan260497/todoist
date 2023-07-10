@@ -8,6 +8,12 @@ const loginAPI = {
     checkLoggedIn : token => {
         const url = `account/logged`
         return axiosClient.post(url,{token})
+    },
+    createAccount : ({email,password}) => {
+        const url = `auth/create`
+        return axiosClient.post(url,{
+            email,password
+        })
     }
 }
 
