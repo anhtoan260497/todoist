@@ -1,13 +1,19 @@
-import React from "react";
+import React, { useState } from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
-import { Typography } from "antd";
+import { Spin, Typography } from "antd";
 import { useForm } from "react-hook-form";
 import { Link, useNavigate } from "react-router-dom";
 import loginRoute from "../../routes/login";
-import { customRegex, setCookies } from "../../helper";
+import { customRegex } from "../../helper";
 import loginAPI from "../../api/loginAPI";
 import SocialLoginButton from "../../components/SocialLoginButton";
+import Cookies from "js-cookie";
+import appRoute from "../../routes/app";
+import Toast from "../../components/Toast";
+import { useDispatch, useSelector } from "react-redux";
+import { setToastType, setToastMessage } from "../../features/toast/toastSlice";
+import { setIsLoading } from "../../features/login/loginSlice";
 
 const { Title } = Typography;
 const { signup, login } = loginRoute;
@@ -15,9 +21,13 @@ const { signup, login } = loginRoute;
 Login.propTypes = {
   isLogin: PropTypes.bool.isRequired,
 };
-function Login({ isLogin }) {
 
-  const navigate = useNavigate()
+function Login({ isLogin }) {
+  const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  const toastType = useSelector((state) => state.toastReducer.toastType);
+  const isLoadingLogin = useSelector((state) => state.loginReducer.isLoading);
 
   const {
     register,
@@ -26,17 +36,30 @@ function Login({ isLogin }) {
   } = useForm();
   const onSubmit = async (data) => {
     try {
+      dispatch(setIsLoading(true))
       let loginData = {
         email: data.email,
         password: data.password,
       };
       const res = await loginAPI.login(loginData);
-      if(res.loggedIn) {
-        setCookies('token',res.token)
-        navigate('/app/today')
+      if (res.loggedIn) {
+        Cookies.set("token", res.token);
+        dispatch(setToastType("success"));
+        dispatch(setToastMessage('Success'));
+        window.location = `http://localhost:3000/app/${appRoute.today}`;
       }
+      dispatch(setIsLoading(false))
     } catch (err) {
-      console.log(err);
+      dispatch(setToastType("error"));
+      dispatch(setToastMessage(err.response.data.status));
+      setTimeout(() => {
+        dispatch(
+          setToastType({
+            toastType: "",
+          })
+        );
+      }, 500);
+      dispatch(setIsLoading(false))
     }
   };
 
@@ -48,12 +71,12 @@ function Login({ isLogin }) {
           src={process.env.PUBLIC_URL + "/svg/icon.svg"}
           alt=""
         />
-
+        <Toast type={toastType} />
         <div className="login-area">
           <Title level={2}>{!isLogin ? "Sign up" : "Login"}</Title>
           <SocialLoginButton type="facebook" />
-          <SocialLoginButton type="google"/>
-          <SocialLoginButton type="apple"/>
+          <SocialLoginButton type="google" />
+          <SocialLoginButton type="apple" />
           <form onSubmit={handleSubmit(onSubmit)}>
             <div className="input-area">
               <label>Email</label>
@@ -86,11 +109,17 @@ function Login({ isLogin }) {
               )}
             </div>
 
-            <input
-              className="input-submit"
-              type="submit"
-              value={!isLogin ? "Sign up with Email" : "Login"}
-            />
+            {!isLoadingLogin ? (
+              <input
+                className="input-submit"
+                type="submit"
+                value={!isLogin ? "Sign up with Email" : "Login"}
+              />
+            ) : (
+              <button className="input-submit">
+                <Spin />
+              </button>
+            )}
           </form>
         </div>
 

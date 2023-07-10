@@ -8,7 +8,7 @@ import EmptyTaskToday from "./components/EmptyTaskToday";
 import TaskList from "./components/TaskList";
 import { useEffect } from "react";
 import loginAPI from "./api/loginAPI";
-import { getCookies } from "./helper";
+import Cookies from "js-cookie";
 
 const { authIndex, signup, login } = loginRoute;
 const { appIndex, today, upcoming } = appRoute;
@@ -18,12 +18,13 @@ function App() {
   const navigate = useNavigate()
 
   useEffect(() => {
+    
     const checkLoggedIn = async () => {
       try {
-        const res = await loginAPI.checkLoggedIn(getCookies("token"));
+        const res = await loginAPI.checkLoggedIn(Cookies('token'));
         if (res.loggedIn) navigate(`app/${today}`)
       } catch (err) {
-        navigate(`auth/${login}`)
+        // navigate(`auth/${login}`)
       }
     };
     checkLoggedIn();
