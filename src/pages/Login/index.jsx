@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React from "react";
 import PropTypes from "prop-types";
 import "./styles.scss";
 import { Spin, Typography } from "antd";
@@ -34,9 +34,11 @@ function Login({ isLogin }) {
     handleSubmit,
     formState: { errors },
   } = useForm();
-  const onSubmit = async (data) => {
+
+  //submit form
+  const loginSubmit = async (data) => {
     try {
-      dispatch(setIsLoading(true))
+      dispatch(setIsLoading(true));
       let loginData = {
         email: data.email,
         password: data.password,
@@ -45,10 +47,10 @@ function Login({ isLogin }) {
       if (res.loggedIn) {
         Cookies.set("token", res.token);
         dispatch(setToastType("success"));
-        dispatch(setToastMessage('Success'));
+        dispatch(setToastMessage("Success"));
         window.location = `http://localhost:3000/app/${appRoute.today}`;
       }
-      dispatch(setIsLoading(false))
+      dispatch(setIsLoading(false));
     } catch (err) {
       dispatch(setToastType("error"));
       dispatch(setToastMessage(err.response.data.status));
@@ -59,9 +61,37 @@ function Login({ isLogin }) {
           })
         );
       }, 500);
-      dispatch(setIsLoading(false))
+      dispatch(setIsLoading(false));
     }
   };
+
+  const registerSubmit = async (data) => {
+    const registerData = {
+      email: data.email,
+      password: data.password,
+    };
+    try {
+      setIsLoading(true)
+      const res = await loginAPI.createAccount(registerData)
+      if(res.status === 200) {
+        dispatch(setToastType("success"));
+        dispatch(setToastMessage(res.message));
+        navigate('/auth/login')
+      }
+      setIsLoading(false)
+    } catch (err) {
+      dispatch(setToastType("error"));
+      dispatch(setToastMessage(err.response.data.status));
+      setTimeout(() => {
+        dispatch(
+          setToastType({
+            toastType: "",
+          })
+        );
+      }, 500);
+      dispatch(setIsLoading(false));
+    }
+  }
 
   return (
     <div className="login-container">
@@ -77,7 +107,8 @@ function Login({ isLogin }) {
           <SocialLoginButton type="facebook" />
           <SocialLoginButton type="google" />
           <SocialLoginButton type="apple" />
-          <form onSubmit={handleSubmit(onSubmit)}>
+
+          <form onSubmit={isLogin  ? handleSubmit(loginSubmit) : handleSubmit(registerSubmit)}>
             <div className="input-area">
               <label>Email</label>
               <input

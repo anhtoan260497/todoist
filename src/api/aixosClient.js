@@ -6,7 +6,7 @@ const axiosClient = axios.create({
   // baseURL: process.env.REACT_APP_TODOIST_DOMAIN,
   baseURL  : 'http://localhost:8080/api/',
   headers: {
-    "content-type": "application/json",
+    "content-type": "application/x-www-form-urlencoded",
     'Authorization': `Bearer ${Cookies.get('token')}`
   },
   paramsSerializer: (params) => queryString.stringify(params),
