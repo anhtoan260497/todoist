@@ -15,18 +15,18 @@ function TaskList() {
   const [isOpenUpcoming, setIsOpenUpcoming] = useState(true);
 
   const renderOverdueTaskList = () =>
-    taskQuery.tasks.overdue.map((item) => (
-      <TaskListItem key={item._id} taskItemData={item} isOverdue />
+    taskQuery.tasks.overdue.map((item,key) => (
+      <TaskListItem key={key} taskItemData={item} isOverdue />
     ));
 
   const renderTodayTaskList = () =>
-    taskQuery.tasks.today.map((item) => (
-      <TaskListItem key={item._id} taskItemData={item} />
+    taskQuery.tasks.today.map((item,key) => (
+      <TaskListItem key={key} taskItemData={item} />
     ));
 
   const renderUpcomingTaskList = () =>
-    taskQuery.tasks.upcoming.map((item) => (
-      <TaskListItem key={item._id} taskItemData={item} />
+    taskQuery.tasks.upcoming.map((item,key) => (
+      <TaskListItem key={key} taskItemData={item} />
     ));
 
   return (

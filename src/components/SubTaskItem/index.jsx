@@ -7,18 +7,15 @@ import { setToastMessage, setToastType } from "../../features/toast/toastSlice";
 import { toggleModalTaskDetail } from "../../features/modal/modalSlice";
 import { Tooltip } from "antd";
 import {
-  CalendarOutlined,
   CheckOutlined,
   CloseCircleOutlined,
 } from "@ant-design/icons";
 import "./styles.scss";
-import useCalculateTime from "../../hooks/useCalculateTime";
 import clsx from "clsx";
 
 SubTaskItem.propTypes = {};
 
 function SubTaskItem({ taskItemData }) {
-  console.log(taskItemData)
   const {
     title,
     description,

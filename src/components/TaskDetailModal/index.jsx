@@ -1,4 +1,4 @@
-import React, { useRef, useState, ReactDOM, useCallback } from "react";
+import React, { useRef, useState, ReactDOM, useCallback, useMemo } from "react";
 import "./styles.scss";
 import { DatePicker, Dropdown, Modal, Select, Tooltip } from "antd";
 import { useDispatch, useSelector } from "react-redux";
@@ -16,19 +16,27 @@ import useCalculateTime from "../../hooks/useCalculateTime";
 import clsx from "clsx";
 import SubTaskItem from "../SubTaskItem";
 import dayjs from "dayjs";
+import useTaskQuery from "../../hooks/useTaskQuery";
+import useProjectQuery from "../../hooks/useProjectQuery";
+import projectAPI from "../../api/projectAPI";
 
 TaskDetailModal.propTypes = {};
 
 function TaskDetailModal({ taskItemData }) {
-  const taskDetailId = useSelector((state) => state.modalReducer.taskDetailId);
   const queryClient = useQueryClient();
-  const { title, description, subTask, labels, date, _id, project, isOverdue,priority } =
-    taskItemData;
+  const {
+    title,
+    description,
+    subTask,
+    labels,
+    date,
+    _id,
+    project,
+    isOverdue,
+    priority,
+  } = taskItemData;
 
   const dispatch = useDispatch();
-
-  console.log("project", project, taskItemData);
-
   const priorityOptions = [
     {
       value: 0,
@@ -45,13 +53,17 @@ function TaskDetailModal({ taskItemData }) {
   ];
 
   const time = useCalculateTime(date);
-  console.log(time)
-
   const [descriptionValue, setDescriptionValue] = useState(description);
   const [titleValue, setTitleValue] = useState(title);
   const [isShowSubTask, setIsShowSubTask] = useState(true);
   const [datePicker, setDatePicker] = useState();
-  const [priorityPicker, setPriorityPicker] = useState(priorityOptions?.[priority] || null);
+  const [priorityPicker, setPriorityPicker] = useState(
+    priorityOptions?.[priority] || null
+  );
+  const [selectedProject, setSelectedProject] = useState(project);
+
+  const titleRef = useRef(null);
+  const descriptionRef = useRef(null);
 
   const isShowModalTaskDetail = useSelector(
     (state) => state.modalReducer.isShowModalTaskDetail
@@ -59,13 +71,26 @@ function TaskDetailModal({ taskItemData }) {
 
   const textAearRef = useRef();
 
+  const projectQuery = useProjectQuery();
+
+  const listProject = useMemo(() => {
+    if (projectQuery.isLoading || projectQuery?.projects?.length === 0) return;
+    return projectQuery.projects.map((item) => ({
+      title: item.title,
+      _id: item._id,
+    }));
+  }, [projectQuery]);
+
   const renderSubTask = () => {
-    return subTask.map((item,idx) => <SubTaskItem key={idx} taskItemData={item} />);
+    return subTask.map((item, idx) => (
+      <SubTaskItem key={idx} taskItemData={item} />
+    ));
   };
 
   const handleOk = () => {
     dispatch(toggleModalTaskDetail(false));
   };
+
   const handleCancel = () => {
     dispatch(toggleModalTaskDetail(false));
     setDescriptionValue(description);
@@ -81,13 +106,72 @@ function TaskDetailModal({ taskItemData }) {
     return res;
   };
 
-  const handleChangeValue = useCallback((e) => {
-    setDescriptionValue(e.target.value);
-  }, []);
+  const onUpdateProject = useCallback(
+    async ({ projectChange }) => {
+      const cloneTaskItemData = { ...taskItemData };
+      cloneTaskItemData.title = titleValue;
+      cloneTaskItemData.description = descriptionValue;
+      cloneTaskItemData.project = projectChange || project;
+      cloneTaskItemData.projectChange =
+        projectChange !== project ? true : false;
+      cloneTaskItemData.oldProject = projectChange !== project ? project : null;
+      cloneTaskItemData.priority = priorityPicker;
+      cloneTaskItemData.date = datePicker || date;
+      console.log(cloneTaskItemData);
+      const res = await projectAPI.updateProject(cloneTaskItemData);
+      return res;
+    },
+    [
+      taskItemData,
+      titleValue,
+      descriptionValue,
+      priorityPicker,
+      datePicker,
+      project,
+      date,
+    ]
+  );
 
-  const handleChangeTitleValue = useCallback((e) => {
-    setTitleValue(e.target.value);
-  }, []);
+  const projectMutation = useMutation({
+    mutationFn: ({ projectChange   }) => onUpdateProject({ projectChange }),
+    onSuccess: () => {
+      queryClient.invalidateQueries(['task']);
+    },
+    onError: () => {
+      console.log("hi");
+    },
+  });
+
+  const handleChangeValue = useCallback(
+    (e) => {
+      setDescriptionValue(e.target.value);
+      if (descriptionRef.current) clearTimeout(descriptionRef.current);
+      descriptionRef.current = setTimeout(() => {
+        projectMutation.mutate({ projectChange: project });
+      }, 1000);
+    },
+    [projectMutation,project]
+  );
+
+  const handleChangeTitleValue = useCallback(
+    (e) => {
+      setTitleValue(e.target.value);
+      if (titleRef.current) clearTimeout(titleRef.current);
+      titleRef.current = setTimeout(() => {
+        projectMutation.mutate({ projectChange: project });
+      }, 1000);
+    },
+    [projectMutation,project]
+  );
+
+  const handleChangeProject = useCallback(
+    (title) => {
+      setSelectedProject(title);
+      if (title === selectedProject) return;
+      projectMutation.mutate({ projectChange: title });
+    },
+    [projectMutation, selectedProject]
+  );
 
   const textAreaAdjust = useCallback(() => {
     if (!textAearRef.current) return;
@@ -96,61 +180,44 @@ function TaskDetailModal({ taskItemData }) {
       10 + textAearRef.current.scrollHeight + "px";
   }, []);
 
-  const handleChangeDate = (date) => {
-    setDatePicker(date.$d);
-  };
+  const handleChangeDate = useCallback(
+    (date) => {
+      setDatePicker(new Date(date.$d).getTime());
+      projectMutation.mutate({ projectChange: project });
+    },
+    [projectMutation,project]
+  );
 
-  const handleChangePriority = (value) => {
-    setPriorityPicker(value);
-  };
+  const handleChangePriority = useCallback(
+    (value) => {
+      setPriorityPicker(value);
+      projectMutation.mutate({ projectChange: project });
+    },
+    [projectMutation,project]
+  );
 
-  const items = [
-    {
-      label: (
-        <div className="project-name" onClick={(e) => e.preventDefault()}>
-          <div className="project-name-name ">
-            <div className="color-dot"></div>
-            <span className="cut-text">
-              ProjectNamebioadbsodboaisbdioasbdioasbdoiasb
-            </span>
+  const projectItems = useMemo(() => {
+    if (!listProject || listProject?.length === 0)
+      // return [{ label: <></>, key: 0 }];
+      return;
+    return listProject.map((item) => {
+      return {
+        label: (
+          <div
+            className="project-name"
+            onClick={() => handleChangeProject(item.title)}
+          >
+            <div className="project-name-name ">
+              <div className="color-dot"></div>
+              <span className="cut-text">{item.title}</span>
+            </div>
+            <DownOutlined />
           </div>
-          <DownOutlined />
-        </div>
-      ),
-      key: "0",
-    },
-    {
-      label: (
-        <div className="project-name " onClick={(e) => e.preventDefault()}>
-          <div className="project-name-name ">
-            <div className="color-dot"></div>
-            <span className="cut-text">
-              ProjectNamebioadbsodboaisbdioasbdioasbdoiasb
-            </span>
-          </div>
-          <DownOutlined />
-        </div>
-      ),
-      key: "1",
-    },
-    {
-      type: "divider",
-    },
-    {
-      label: (
-        <div className="project-name" onClick={(e) => e.preventDefault()}>
-          <div className="project-name-name ">
-            <div className="color-dot"></div>
-            <span className="cut-text">
-              ProjectNamebioadbsodboaisbdioasbdioasbdoiasb
-            </span>
-          </div>
-          <DownOutlined />
-        </div>
-      ),
-      key: "3",
-    },
-  ];
+        ),
+        key: item._id,
+      };
+    });
+  }, [listProject, handleChangeProject]);
 
   const tasksMutation = useMutation({
     mutationFn: handleDoneTask,
@@ -230,16 +297,14 @@ function TaskDetailModal({ taskItemData }) {
           <p className="project-title"> Project</p>
           <Dropdown
             menu={{
-              items,
+              items: projectItems,
             }}
             trigger={["click"]}
           >
-            <div className="project-name" onClick={(e) => e.preventDefault()}>
-              <div className="project-name-name ">
+            <div className="project-name">
+              <div className="project-name-name">
                 <div className="color-dot"></div>
-                <span className="cut-text">
-                  ProjectNamebioadbsodboaisbdioasbdioasbdoiasb
-                </span>
+                <span className="cut-text">{selectedProject}</span>
               </div>
               <DownOutlined />
             </div>
@@ -254,7 +319,10 @@ function TaskDetailModal({ taskItemData }) {
               className="date-picker"
               onChange={handleChangeDate}
               placeholder="Due Date"
-              defaultValue={dayjs(`${time.date}-${time.monthNum}-${time.year}`, 'DD-MM-YYYY')}
+              defaultValue={dayjs(
+                `${time.date}-${time.monthNum}-${time.year}`,
+                "DD-MM-YYYY"
+              )}
             />
           </div>
         </div>

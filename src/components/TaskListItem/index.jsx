@@ -17,7 +17,10 @@ import { useDispatch, useSelector } from "react-redux";
 import { setToastMessage, setToastType } from "../../features/toast/toastSlice";
 import clsx from "clsx";
 import TaskDetailModal from "../TaskDetailModal";
-import { setTaskDetailId, toggleModalTaskDetail } from "../../features/modal/modalSlice";
+import {
+  setTaskDetailId,
+  toggleModalTaskDetail,
+} from "../../features/modal/modalSlice";
 
 TaskListItem.propTypes = {
   taskItemData: PropTypes.object.isRequired,
@@ -29,15 +32,12 @@ TaskListItem.defaultProps = {
 };
 
 function TaskListItem({ taskItemData, isOverdue }) {
-  const { title, description, subTask, comments, labels, date, _id, project } =
+  const { title, description, subTask, date, _id, project } =
     taskItemData;
   const time = useCalculateTime(date);
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
-  const isShowModalTaskDetail = useSelector(
-    (state) => state.modalReducer.isShowModalTaskDetail
-  );
-  const taskDetailId = useSelector(state => state.modalReducer.taskDetailId)
+  const taskDetailId = useSelector((state) => state.modalReducer.taskDetailId);
 
   const handleDoneTask = async () => {
     const chooseTask = {
@@ -49,7 +49,7 @@ function TaskListItem({ taskItemData, isOverdue }) {
   };
 
   const handleShowTaskDetail = () => {
-    dispatch(setTaskDetailId(_id))
+    dispatch(setTaskDetailId(_id));
     dispatch(toggleModalTaskDetail(true));
   };
 
@@ -96,17 +96,11 @@ function TaskListItem({ taskItemData, isOverdue }) {
                 <p>{`${time.date} ${time.shortMonths}`}</p>
               </div>
             )}
-            {labels.length > 0 && (
-              <div className="extra-item">
-                <TagOutlined />
-                <p>{labels.length}</p>
-              </div>
-            )}
           </div>
         </div>
       </div>
       <div className="clear" />
-     {taskDetailId === _id && <TaskDetailModal taskItemData={taskItemData} />}
+      {taskDetailId === _id && <TaskDetailModal taskItemData={taskItemData} />}
       <Toast />
     </>
   );
