@@ -6,7 +6,7 @@ const loginAPI = {
         return axiosClient.post(url,{email,password})
     },
     checkLoggedIn : token => {
-        const url = `account/logged`
+        const url = `auth/logged`
         return axiosClient.post(url,{token})
     },
     createAccount : ({email,password}) => {

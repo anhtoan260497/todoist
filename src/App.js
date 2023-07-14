@@ -1,12 +1,17 @@
-import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
+import React, { useEffect } from "react";
+import {
+  Navigate,
+  Route,
+  Routes,
+  useLocation,
+  useNavigate,
+} from "react-router-dom";
 import "./App.css";
 import Login from "./pages/Login";
 import loginRoute from "./routes/login";
 import appRoute from "./routes/app";
 import AppHome from "./pages/AppHome";
-import EmptyTaskToday from "./components/EmptyTaskToday";
 import TaskList from "./components/TaskList";
-import { useEffect } from "react";
 import loginAPI from "./api/loginAPI";
 import Cookies from "js-cookie";
 
@@ -14,21 +19,30 @@ const { authIndex, signup, login } = loginRoute;
 const { appIndex, today, upcoming } = appRoute;
 
 function App() {
+  const navigate = useNavigate();
+  const location = useLocation();
 
-  const navigate = useNavigate()
-
+  //check loggedIn ->  if true : go to app page -> if false redirect to signin page
   useEffect(() => {
-    
     const checkLoggedIn = async () => {
       try {
-        const res = await loginAPI.checkLoggedIn(Cookies('token'));
-        if (res.loggedIn) navigate(`app/${today}`)
+        const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
+        if (res.loggedIn) {
+          Cookies.set('token',res.token)
+          navigate(`app/${today}`)
+        };
       } catch (err) {
-        // navigate(`auth/${login}`)
+        console.log(err);
+        window.location = `http://localhost:3000/auth/login`;
       }
     };
+    if (
+      location.pathname === `/auth/${login}` ||
+      location.pathname === `/auth/${signup}`
+    )
+      return;
     checkLoggedIn();
-  }, [navigate]);
+  }, [navigate, location.pathname]);
 
   return (
     <div className="App">
