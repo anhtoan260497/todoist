@@ -1,10 +1,20 @@
 .App {
     /* max-width: 1280px; */
     margin: auto;
-    padding : 0; 
-    font-family: -apple-system,system-ui,"Segoe UI",Roboto,Noto,Oxygen-Sans,Ubuntu,Cantrell,"Helvetica Neue",sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
+    padding: 0;
+    font-family: -apple-system, system-ui, "Segoe UI", Roboto, Noto, Oxygen-Sans, Ubuntu, Cantrell, "Helvetica Neue",
+        sans-serif, "Apple Color Emoji", "Segoe UI Emoji", "Segoe UI Symbol";
 }
 
 .ant-spin-dot-item {
     background-color: white !important;
-  }
+}
+
+.cut-text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    display: -webkit-box;
+    -webkit-line-clamp: 1; /* after 1 line show ... */
+    -webkit-box-orient: vertical;
+}
+

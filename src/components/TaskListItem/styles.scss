@@ -2,7 +2,12 @@
     width: 100%;
     display: flex;
     justify-content: space-between;
-    margin: 15px 0;
+    padding: 15px 5px;
+    cursor: pointer;
+
+    &:hover {
+        background-color: #ececec;
+    }
 
     .check-button {
         width: 20px;
@@ -36,9 +41,10 @@
 
     .task-list-item-content {
         width: calc(100% - 30px);
+
         .task-list-item-title {
             font-size: 15px;
-            font-weight: 300;
+            font-weight: 500;
         }
 
         .task-list-item-description {
@@ -49,17 +55,21 @@
 
         .task-list-item-extra-info {
             display: flex;
-            gap : 10px;
+            gap: 10px;
 
             .extra-item {
                 display: flex;
                 font-size: 12px;
-                color : #8e8e8e;
-                margin-top : 10px;
+                color: #8e8e8e;
+                margin-top: 10px;
                 display: flex;
                 justify-content: center;
                 align-items: center;
-                gap : 2px;
+                gap: 2px;
+            }
+
+            .overdue-color {
+                color : rgb(219, 76, 63)
             }
         }
     }

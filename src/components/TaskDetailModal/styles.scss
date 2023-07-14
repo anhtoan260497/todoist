@@ -1,0 +1,155 @@
+@import "../TaskListItem/styles.scss";
+.modal-task-detail-modal {
+    width: 768px !important;
+    padding: 0;
+
+    .task-detail-left-modal {
+        width: 66%;
+        height: 500px;
+        overflow-y: auto;
+    }
+
+    .task-detail-right-modal {
+        width: 33%;
+        // border: 1px solid red;
+
+        .project-title {
+            font-size: 13px;
+            font-weight: 600;
+            color: #9e9e9e;
+        }
+
+        .project-container {
+            margin-bottom: 10px 0 10px 0;
+            width: 100%;
+
+            .project-date {
+             
+                margin-top: 5px;
+                width: 100%;
+                display: block;
+            }
+        }
+    }
+
+    .ant-modal-content {
+        width: 100%;
+
+        .ant-modal-body {
+            display: flex;
+        }
+    }
+
+    @extend .task-list-item-container;
+
+    .task-list-item-container {
+        cursor: auto;
+        margin: 10px 0;
+        &:hover {
+            background-color: unset;
+        }
+
+        .check-button {
+            position: relative;
+            top: 3px;
+        }
+
+        .task-list-item-title {
+            font-size: 20px;
+            border: none;
+            outline: none;
+        }
+
+        .task-list-item-description {
+            width: 100%;
+            resize: none;
+            padding: 5px 10px;
+            min-height: 32px;
+            font-size: 16px;
+            font-weight: 300;
+            color: black;
+            border: none;
+            outline: none;
+
+            &::placeholder {
+                color: #cecece;
+            }
+        }
+    }
+
+    &:hover {
+        background-color: unset;
+    }
+
+    .sub-task-item-container {
+        width: 95%;
+        margin: auto;
+
+        .option-hidden {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.5s ease;
+        }
+
+        .option-show {
+            max-height: 2000px;
+
+            transition: max-height 1s ease-in;
+        }
+    }
+
+    .clear {
+        margin: 10px auto;
+    }
+
+    .sub-task-item-container {
+        .sub-task-item-header {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+
+            .sub-task-item-title {
+                display: flex;
+                gap: 5px;
+                align-items: center;
+                font-weight: 600;
+                font-size: 15px;
+            }
+
+            .sub-task-item-count {
+                color: #9e9e9e;
+                font-size: 13px;
+            }
+        }
+    }
+}
+
+.project-name {
+    cursor: pointer;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    .project-name-name{
+        display: flex;
+        align-items: center;
+        gap : 10px;
+        width: calc(100% - 20px);
+        max-width: 300px;
+        
+
+
+        .color-dot {
+            width: 10px;
+            height: 10px;
+            border:1px solid blue;
+            border-radius: 50%;
+            background-color: blue;
+        }
+
+        span {
+           width : 90%;
+
+        }
+    }
+}

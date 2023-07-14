@@ -12,6 +12,7 @@ import AddProjectModal from "../AddProjectModal";
 import { Link, useParams } from "react-router-dom";
 import appRoute from "../../routes/app";
 import { toggleModalAddProject } from "../../features/modal/modalSlice";
+import useTaskQuery from "../../hooks/useTaskQuery";
 
 MenuLeft.propTypes = {};
 
@@ -19,6 +20,8 @@ MenuLeft.propTypes = {};
 const {today, upcoming} = appRoute
 
 function MenuLeft() {
+
+  const taskQuery = useTaskQuery()
   
   const isActiveMenu = useSelector((state) => state.menuReducer.isActiveMenu);
   const params = useParams()
