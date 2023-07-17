@@ -28,9 +28,9 @@ function App() {
       try {
         const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
         if (res.loggedIn) {
-          Cookies.set('token',res.token)
-          navigate(`app/${today}`)
-        };
+          Cookies.set("token", res.token);
+          navigate(`app/${today}`);
+        }
       } catch (err) {
         console.log(err);
         window.location = `http://localhost:3000/auth/login`;
@@ -43,6 +43,21 @@ function App() {
       return;
     checkLoggedIn();
   }, [navigate, location.pathname]);
+
+  useEffect(() => {
+    setTimeout(async () => {
+      try {
+        const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
+        if (res.loggedIn) {
+          Cookies.set("token", res.token);
+          navigate(`app/${today}`);
+        }
+      } catch (err) {
+        console.log(err);
+        window.location = `http://localhost:3000/auth/login`;
+      }
+    }, 600000);
+  }, [navigate]);
 
   return (
     <div className="App">
