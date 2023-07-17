@@ -8,6 +8,7 @@ import {
   CaretRightOutlined,
   CheckOutlined,
   DownOutlined,
+  PlusOutlined,
 } from "@ant-design/icons";
 import { useMutation, useQueryClient } from "react-query";
 import { setToastMessage, setToastType } from "../../features/toast/toastSlice";
@@ -16,7 +17,6 @@ import useCalculateTime from "../../hooks/useCalculateTime";
 import clsx from "clsx";
 import SubTaskItem from "../SubTaskItem";
 import dayjs from "dayjs";
-import useTaskQuery from "../../hooks/useTaskQuery";
 import useProjectQuery from "../../hooks/useProjectQuery";
 import projectAPI from "../../api/projectAPI";
 
@@ -56,11 +56,14 @@ function TaskDetailModal({ taskItemData }) {
   const [descriptionValue, setDescriptionValue] = useState(description);
   const [titleValue, setTitleValue] = useState(title);
   const [isShowSubTask, setIsShowSubTask] = useState(true);
-  const [datePicker, setDatePicker] = useState();
+  const [datePicker, setDatePicker] = useState(date);
   const [priorityPicker, setPriorityPicker] = useState(
     priorityOptions?.[priority] || null
   );
   const [selectedProject, setSelectedProject] = useState(project);
+  const [subTaskTitle, setSubTaskTitle] = useState("");
+  const [subTaskDescription, setSubTaskDescription] = useState("");
+  const [isShowAddSubTask, setIsShowAddSubTask] = useState(false);
 
   const titleRef = useRef(null);
   const descriptionRef = useRef(null);
@@ -82,8 +85,9 @@ function TaskDetailModal({ taskItemData }) {
   }, [projectQuery]);
 
   const renderSubTask = () => {
+    console.log('hi')
     return subTask.map((item, idx) => (
-      <SubTaskItem key={idx} taskItemData={item} />
+      <SubTaskItem key={item._id} taskItemData={item} _id={_id} subTaskId={item._id} subTask={subTask} project={project} />
     ));
   };
 
@@ -107,7 +111,7 @@ function TaskDetailModal({ taskItemData }) {
   };
 
   const onUpdateProject = useCallback(
-    async ({ projectChange }) => {
+    async ({ projectChange, date }) => {
       const cloneTaskItemData = { ...taskItemData };
       cloneTaskItemData.title = titleValue;
       cloneTaskItemData.description = descriptionValue;
@@ -115,30 +119,75 @@ function TaskDetailModal({ taskItemData }) {
       cloneTaskItemData.projectChange =
         projectChange !== project ? true : false;
       cloneTaskItemData.oldProject = projectChange !== project ? project : null;
-      cloneTaskItemData.priority = priorityPicker;
-      cloneTaskItemData.date = datePicker || date;
-      console.log(cloneTaskItemData);
+      cloneTaskItemData.date = date || datePicker;
       const res = await projectAPI.updateProject(cloneTaskItemData);
       return res;
     },
-    [
-      taskItemData,
-      titleValue,
-      descriptionValue,
-      priorityPicker,
-      datePicker,
-      project,
-      date,
-    ]
+    [taskItemData, titleValue, descriptionValue, datePicker, project]
   );
 
+  const onAddSubTask = useCallback(async () => {
+    const cloneSubTask = [...subTask];
+    if (!subTaskTitle) {
+      dispatch(setToastType("error"));
+      dispatch(setToastMessage("Sub-Task must have Title"));
+
+      setTimeout(() => {
+        dispatch(setToastType(""));
+        dispatch(setToastMessage(""));
+      }, 1000);
+      return;
+    }
+    cloneSubTask.push({
+      title: subTaskTitle,
+      description: subTaskDescription,
+      isDone: false,
+    });
+    const res = await taskAPI.addSubTask({
+      _id,
+      project,
+      newSubTask: cloneSubTask,
+    });
+    return res;
+  }, [subTask, subTaskTitle, subTaskDescription, _id, project, dispatch]);
+
   const projectMutation = useMutation({
-    mutationFn: ({ projectChange   }) => onUpdateProject({ projectChange }),
+    mutationFn: ({ projectChange, date }) =>
+      onUpdateProject({ projectChange, date }),
     onSuccess: () => {
-      queryClient.invalidateQueries(['task']);
+      queryClient.invalidateQueries(["task"]);
+      dispatch(setToastType("success"));
+      dispatch(setToastMessage("Update Success"));
+      setTimeout(() => {
+        dispatch(setToastType(""));
+        dispatch(setToastMessage(""));
+      }, 1000);
     },
     onError: () => {
-      console.log("hi");
+      dispatch(setToastType("error"));
+      dispatch(setToastMessage("Error, please try again"));
+      setTimeout(() => {
+        dispatch(setToastType(""));
+        dispatch(setToastMessage(""));
+      }, 1000);
+    },
+  });
+
+  const addSubTaskMutation = useMutation({
+    mutationFn: onAddSubTask,
+    onSuccess: () => {
+      setSubTaskDescription("");
+      setSubTaskTitle("");
+      setIsShowAddSubTask(false);
+      queryClient.invalidateQueries(["task"]);
+    },
+    onError: () => {
+      dispatch(setToastType("error"));
+      dispatch(setToastMessage("Error, please try again"));
+      setTimeout(() => {
+        dispatch(setToastType(""));
+        dispatch(setToastMessage(""));
+      }, 1000);
     },
   });
 
@@ -147,10 +196,10 @@ function TaskDetailModal({ taskItemData }) {
       setDescriptionValue(e.target.value);
       if (descriptionRef.current) clearTimeout(descriptionRef.current);
       descriptionRef.current = setTimeout(() => {
-        projectMutation.mutate({ projectChange: project });
+        projectMutation.mutate({ projectChange: project, date });
       }, 1000);
     },
-    [projectMutation,project]
+    [projectMutation, project, date]
   );
 
   const handleChangeTitleValue = useCallback(
@@ -158,19 +207,19 @@ function TaskDetailModal({ taskItemData }) {
       setTitleValue(e.target.value);
       if (titleRef.current) clearTimeout(titleRef.current);
       titleRef.current = setTimeout(() => {
-        projectMutation.mutate({ projectChange: project });
+        projectMutation.mutate({ projectChange: project, date });
       }, 1000);
     },
-    [projectMutation,project]
+    [projectMutation, project, date]
   );
 
   const handleChangeProject = useCallback(
     (title) => {
       setSelectedProject(title);
       if (title === selectedProject) return;
-      projectMutation.mutate({ projectChange: title });
+      projectMutation.mutate({ projectChange: title, date });
     },
-    [projectMutation, selectedProject]
+    [projectMutation, selectedProject, date]
   );
 
   const textAreaAdjust = useCallback(() => {
@@ -183,17 +232,20 @@ function TaskDetailModal({ taskItemData }) {
   const handleChangeDate = useCallback(
     (date) => {
       setDatePicker(new Date(date.$d).getTime());
-      projectMutation.mutate({ projectChange: project });
+      projectMutation.mutate({
+        projectChange: project,
+        date: new Date(date.$d).getTime(),
+      });
     },
-    [projectMutation,project]
+    [projectMutation, project]
   );
 
   const handleChangePriority = useCallback(
     (value) => {
       setPriorityPicker(value);
-      projectMutation.mutate({ projectChange: project });
+      projectMutation.mutate({ projectChange: project, date });
     },
-    [projectMutation,project]
+    [projectMutation, project, date]
   );
 
   const projectItems = useMemo(() => {
@@ -235,13 +287,13 @@ function TaskDetailModal({ taskItemData }) {
 
   return (
     <Modal
-      title={project}
+      title={project}z
       className="modal-task-detail-modal"
       maskStyle={{ backgroundColor: "rgba(0,0,0,50%)" }}
       open={isShowModalTaskDetail}
       onOk={handleOk}
       onCancel={handleCancel}
-      okText="Save"
+      footer={null}
       closable
     >
       <div className="task-detail-left-modal">
@@ -281,13 +333,54 @@ function TaskDetailModal({ taskItemData }) {
               Sub-Task
             </p>
 
-            <p className="sub-task-item-count">0/3</p>
+            {subTask.length > 0 && (
+              <p className="sub-task-item-count">{`${
+                subTask.filter((item) => item.isDone).length
+              }/${subTask.length}`}</p>
+            )}
           </div>
           <div className="clear"></div>
           <div
             className={clsx("option-hidden", isShowSubTask && "option-show")}
           >
             {renderSubTask()}
+
+            {!isShowAddSubTask ? (
+              <div
+                className="new-subtask"
+                onClick={() => setIsShowAddSubTask(true)}
+              >
+                <PlusOutlined className="new-subtask-icon" />
+                <p className="description add-label">Add Task</p>
+              </div>
+            ) : (
+              <>
+                <div className="new-subtask-form">
+                  <input
+                    className="task-list-item-title"
+                    onChange={(e) => setSubTaskTitle(e.target.value)}
+                    value={subTaskTitle}
+                    placeholder="Title"
+                  />
+                  <textarea
+                    className="task-list-item-description"
+                    placeholder="Description"
+                    ref={textAearRef}
+                    value={subTaskDescription}
+                    onKeyUp={textAreaAdjust}
+                    onChange={(e) => setSubTaskDescription(e.target.value)}
+                  />
+                </div>
+                <div className="new-subtask-button">
+                  <button onClick={() => setIsShowAddSubTask(false)}>
+                    Cancel
+                  </button>
+                  <button onClick={() => addSubTaskMutation.mutate()}>
+                    Add Sub Task
+                  </button>
+                </div>
+              </>
+            )}
           </div>
         </div>
       </div>
@@ -320,7 +413,7 @@ function TaskDetailModal({ taskItemData }) {
               onChange={handleChangeDate}
               placeholder="Due Date"
               defaultValue={dayjs(
-                `${time.date}-${time.monthNum}-${time.year}`,
+                `${time.date}-${time.monthNum + 1}-${time.year}`,
                 "DD-MM-YYYY"
               )}
             />
@@ -345,8 +438,6 @@ function TaskDetailModal({ taskItemData }) {
           </div>
         </div>
       </div>
-
-      <div className="task-deta"></div>
     </Modal>
   );
 }

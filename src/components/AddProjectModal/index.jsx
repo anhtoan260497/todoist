@@ -42,7 +42,6 @@ function AddProjectModal({ isOpenProjectModal, setIsOpenProjectModal }) {
         onOk={() => submitProject("hi")}
         onCancel={() => dispatch(toggleModalAddProject(false))}
         okButtonProps={{disabled : name.length === 0}}
-      
       >
         <div className="input-field">
           <ColorPicker onChange={handleChangeColor} className="color-picker" defaultValue={'rgb(219, 76, 63)'}/>

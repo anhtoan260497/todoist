@@ -15,15 +15,15 @@ const useCalculateTime = (timestamp) => {
     "December",
   ];
   const weekdays = [
-    "Monday",
+    "Sunday",
     "Tuesday",
     "Wednesday",
     "Thursday",
     "Friday",
     "Saturday",
-    "Sunday",
+    "Monday",
   ];
-  const shortWeekdays = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+  const shortWeekdays = ["Sun", "Tue", "Wed", "Thu", "Fri", "Sat","Mon"];
   const shortMonths = [
     "Jan",
     "Feb",
@@ -40,16 +40,17 @@ const useCalculateTime = (timestamp) => {
   ];
   const now = !timestamp ?  new Date() : new Date(timestamp);
   const date = now.getDate();
-  const day = now.getDay() - 1;
-  const month = now.getMonth() - 1;
+  const day = now.getDay();
+  const month = now.getMonth();
   const year = now.getFullYear();
 
+
   return {
-    date: date >= 10 ? date : `0${date}`,
+    date: date <= 10 ? `0${date}` : date ,
     day: weekdays[day],
     shortWeekdays: shortWeekdays[day],
-    monthNum : month > 10 ? month + 2 : `0${month + 2} `,
-    month: months[month],
+    monthNum : month > 10 ? month : `0${month +1} `,
+    month: months[month - 1],
     shortMonths : shortMonths[month],
     year,
     timestamp: Date.now(),

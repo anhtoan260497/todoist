@@ -1,11 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import "./styles.scss";
 import {
   CalendarOutlined,
   CheckOutlined,
-  CommentOutlined,
   NodeIndexOutlined,
-  TagOutlined,
 } from "@ant-design/icons";
 import useCalculateTime from "../../hooks/useCalculateTime";
 import PropTypes from "prop-types";
