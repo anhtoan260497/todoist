@@ -5,29 +5,49 @@ import TaskListItem from "../TaskListItem";
 import useTaskQuery from "../../hooks/useTaskQuery";
 import { allTask } from "../../helper";
 import { CaretDownOutlined, CaretLeftOutlined } from "@ant-design/icons";
-
-TaskList.propTypes = {};
+import { useLocation, useParams } from "react-router-dom";
+import useProjectQuery from "../../hooks/useProjectQuery";
 
 function TaskList() {
+  const params = useParams();
   const taskQuery = useTaskQuery();
+  const projectQuery = useProjectQuery();
   const [isOpenOverdue, setIsOpenOverdue] = useState(true);
   const [isOpenToday, setIsOpenToday] = useState(true);
   const [isOpenUpcoming, setIsOpenUpcoming] = useState(true);
 
-  const renderOverdueTaskList = () =>
-    taskQuery.tasks.overdue.map((item,key) => (
-      <TaskListItem key={key} taskItemData={item} isOverdue />
-    ));
-
-  const renderTodayTaskList = () =>
-    taskQuery.tasks.today.map((item,key) => (
+  const renderOverdueTaskList = () => {
+    if (params.id && !projectQuery.isLoading) {
+     return projectQuery.projects.overdue.map((item, key) => (
+        <TaskListItem key={key} taskItemData={item} />
+      ));
+    }
+    return taskQuery.tasks.overdue.map((item, key) => (
       <TaskListItem key={key} taskItemData={item} />
     ));
-
-  const renderUpcomingTaskList = () =>
-    taskQuery.tasks.upcoming.map((item,key) => (
+  };
+  
+  const renderTodayTaskList = () => {
+    if (params.id && !projectQuery.isLoading) {
+     return projectQuery.projects.today.map((item, key) => (
+        <TaskListItem key={key} taskItemData={item} />
+      ));
+    }
+    return taskQuery.tasks.today.map((item, key) => (
       <TaskListItem key={key} taskItemData={item} />
     ));
+  };
+
+  const renderUpcomingTaskList = () => {
+    if (params.id && !projectQuery.isLoading) {
+      return projectQuery.projects.upcoming.map((item, key) => (
+        <TaskListItem key={key} taskItemData={item} />
+      ));
+    }
+    return taskQuery.tasks.upcoming.map((item, key) => (
+      <TaskListItem key={key} taskItemData={item} />
+    ));
+  };
 
   return (
     <div className="task-list-container ">

@@ -1,18 +1,29 @@
-import React, { useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { DatePicker, Modal, Select } from "antd";
 import { useDispatch, useSelector } from "react-redux";
 import { toggleModalAddTask } from "../../features/modal/modalSlice";
 import "./styles.scss";
+import { setToastMessage, setToastType } from "../../features/toast/toastSlice";
+import useCalculateTime from "../../hooks/useCalculateTime";
+import dayjs from "dayjs";
+import useProjectQuery from "../../hooks/useProjectQuery";
+import { useParams } from "react-router-dom";
+import taskAPI from "../../api/taskAPI";
+import { useMutation, useQueryClient } from "react-query";
 
-function AddTaskModal({ isShowAddTaskModal, setIsShowAddTaskModal }) {
+function AddTaskModal() {
   const isShowModalAddTask = useSelector(
     (state) => state.modalReducer.isShowModalAddTask
   );
   const dispatch = useDispatch();
+  const queryClient = useQueryClient();
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
   const [datePicker, setDatePicker] = useState(Date.now());
   const [priorityPicker, setPriorityPicker] = useState(0);
+  const currentTime = useMemo(useCalculateTime, []);
+  const projectQuery = useProjectQuery();
+  const params = useParams();
 
   const priorityOptions = [
     {
@@ -29,16 +40,52 @@ function AddTaskModal({ isShowAddTaskModal, setIsShowAddTaskModal }) {
     },
   ];
 
-  const submitTask = () => {
-    ///do something here
-    ///
-    //
+  const submitTask = async () => {
+    const projectIdx = projectQuery.projects.findIndex(
+      (item) => item._id === params.id
+    );
+
+    const newTask = {
+      title: taskName,
+      description: description,
+      subTask: [],
+      project: projectQuery.projects[projectIdx].title,
+      date: datePicker,
+      priority: priorityPicker,
+    };
+    const project = projectQuery.projects[projectIdx].title;
+    const projectId = params.id;
+
+    const res = await taskAPI.addTask({ newTask, project, projectId });
     setTaskName("");
     setDescription("");
     setDatePicker(Date.now());
     setPriorityPicker(0);
     dispatch(toggleModalAddTask(false));
+    return res;
   };
+
+  const addTaskMutation = useMutation({
+    mutationFn: submitTask,
+    onSuccess: () => {
+      dispatch(setToastType("success"));
+      dispatch(setToastMessage("Add task"));
+      queryClient.invalidateQueries(["task",]);
+    },
+    onError: () => {
+      dispatch(setToastType("error"));
+      dispatch(setToastMessage("Fail, please try again "));
+    },
+  });
+
+  useEffect(() => {
+    if (!isShowModalAddTask) {
+      setTaskName("");
+      setDescription("");
+      setDatePicker(Date.now());
+      setPriorityPicker(0);
+    }
+  }, [isShowModalAddTask]);
 
   const handleChangeTaskName = (e) => {
     setTaskName(e.target.value);
@@ -49,7 +96,8 @@ function AddTaskModal({ isShowAddTaskModal, setIsShowAddTaskModal }) {
   };
 
   const handleChangeDate = (date) => {
-    setDatePicker(date.$d);
+    const timestamp = new Date(date).getTime();
+    setDatePicker(timestamp);
   };
 
   const handleChangePriority = (value) => {
@@ -60,9 +108,10 @@ function AddTaskModal({ isShowAddTaskModal, setIsShowAddTaskModal }) {
     <Modal
       closable={false}
       open={isShowModalAddTask}
-      onOk={() => submitTask("hi")}
+      onOk={() => addTaskMutation.mutate()}
       onCancel={() => dispatch(toggleModalAddTask(false))}
       okButtonProps={{ disabled: taskName.length === 0 }}
+      okText="Add Task"
     >
       <input
         className="task-name-input"
@@ -86,6 +135,10 @@ function AddTaskModal({ isShowAddTaskModal, setIsShowAddTaskModal }) {
           className="date-picker"
           onChange={handleChangeDate}
           placeholder="Due Date"
+          defaultValue={dayjs(
+            `${currentTime.date}-${currentTime.monthNum}-${currentTime.year}`,
+            "DD-MM-YYYY"
+          )}
         />
 
         <Select

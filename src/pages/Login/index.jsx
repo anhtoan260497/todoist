@@ -48,7 +48,7 @@ function Login({ isLogin }) {
         Cookies.set("token", res.token);
         dispatch(setToastType("success"));
         dispatch(setToastMessage("Success"));
-        window.location = `http://localhost:3000/app/${appRoute.today}`;
+        window.location = `http://localhost:3000/app/project/all`;
       }
       dispatch(setIsLoading(false));
     } catch (err) {

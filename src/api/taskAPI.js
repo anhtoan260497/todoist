@@ -17,6 +17,10 @@ const taskAPI = {
     const url = `/task/subtask/check`
     return axiosClient.post(url,{_id,project,newSubTask})
   },
+  addTask : ({newTask,project,projectId}) => {
+    const url = '/task/add'
+    return axiosClient.post(url,{newTask,project,projectId})
+  }
 };
 
 export default taskAPI;
