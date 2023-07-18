@@ -46,10 +46,10 @@ const useCalculateTime = (timestamp) => {
 
 
   return {
-    date: date <= 10 ? `0${date}` : date ,
+    date: date < 10 ? `0${date}` : date ,
     day: weekdays[day],
     shortWeekdays: shortWeekdays[day],
-    monthNum : month > 10 ? month : `0${month +1} `,
+    monthNum : month > 10 ? month : `0${month +1}`,
     month: months[month - 1],
     shortMonths : shortMonths[month],
     year,

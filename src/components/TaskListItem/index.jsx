@@ -19,6 +19,7 @@ import {
   setTaskDetailId,
   toggleModalTaskDetail,
 } from "../../features/modal/modalSlice";
+import { Link, Outlet, useParams } from "react-router-dom";
 
 TaskListItem.propTypes = {
   taskItemData: PropTypes.object.isRequired,
@@ -30,9 +31,9 @@ TaskListItem.defaultProps = {
 };
 
 function TaskListItem({ taskItemData, isOverdue }) {
-  const { title, description, subTask, date, _id, project } =
-    taskItemData;
+  const { title, description, subTask, date, _id, project } = taskItemData;
   const time = useCalculateTime(date);
+  const params = useParams();
   const queryClient = useQueryClient();
   const dispatch = useDispatch();
   const taskDetailId = useSelector((state) => state.modalReducer.taskDetailId);
@@ -46,7 +47,7 @@ function TaskListItem({ taskItemData, isOverdue }) {
     return res;
   };
 
-  const handleShowTaskDetail = () => {
+  const handleOpenModal = () => {
     dispatch(setTaskDetailId(_id));
     dispatch(toggleModalTaskDetail(true));
   };
@@ -64,6 +65,12 @@ function TaskListItem({ taskItemData, isOverdue }) {
     },
   });
 
+  useEffect(() => {
+    if (!params.taskId) return;
+    dispatch(setTaskDetailId(_id));
+    dispatch(toggleModalTaskDetail(true));
+  }, [_id, dispatch, params.taskId]);
+
   return (
     <>
       <div className="task-list-item-container">
@@ -75,9 +82,10 @@ function TaskListItem({ taskItemData, isOverdue }) {
             <CheckOutlined className="check-icon" />
           </button>
         </Tooltip>
-        <div
+        <Link
+          to={params.id ? `task/${_id}` : `/app/project/all/task/${_id}`}
+          onClick={handleOpenModal}
           className="task-list-item-content"
-          onClick={() => handleShowTaskDetail()}
         >
           <h3 className="task-list-item-title">{title}</h3>
           <p className="task-list-item-description">{description}</p>
@@ -95,7 +103,7 @@ function TaskListItem({ taskItemData, isOverdue }) {
               </div>
             )}
           </div>
-        </div>
+        </Link>
       </div>
       <div className="clear" />
       {taskDetailId === _id && <TaskDetailModal taskItemData={taskItemData} />}

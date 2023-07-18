@@ -78,7 +78,12 @@
     .active-link{
         background-color: #eaeaea;
     }
+}
 
+.list-project-container {
+    .project-item-link {
+        text-decoration: none;
+    }   
 }
 
 .no-active-menu {

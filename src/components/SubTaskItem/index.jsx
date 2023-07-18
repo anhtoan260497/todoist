@@ -14,8 +14,6 @@ function SubTaskItem({ taskItemData, _id, subTask, project, subTaskId }) {
 
   const { title, description, isDone } = taskItemData;
   
-  useEffect(() => {
-  },[taskItemData])
   const [onFocusSubTask, setOnFocusTask] = useState(false);
   const [onHoverItem, setOnHoverItem] = useState(false);
 
@@ -69,6 +67,7 @@ function SubTaskItem({ taskItemData, _id, subTask, project, subTaskId }) {
     mutationFn: (type) => onDoneSubTask(type),
     onSuccess: () => {
       queryClient.invalidateQueries(["task"]);
+      queryClient.invalidateQueries(["project"])
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Update Sub-Task"));
       setTimeout(() => {

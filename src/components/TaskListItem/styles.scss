@@ -41,6 +41,8 @@
 
     .task-list-item-content {
         width: calc(100% - 30px);
+        text-decoration: none;
+        color :black;
 
         .task-list-item-title {
             font-size: 15px;

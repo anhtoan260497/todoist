@@ -1,4 +1,4 @@
-import React, { useRef, useState, ReactDOM, useCallback, useMemo } from "react";
+import React, { useRef, useState, ReactDOM, useCallback, useMemo, useEffect } from "react";
 import "./styles.scss";
 import { DatePicker, Dropdown, Modal, Select, Tooltip } from "antd";
 import { useDispatch, useSelector } from "react-redux";
@@ -19,6 +19,7 @@ import SubTaskItem from "../SubTaskItem";
 import dayjs from "dayjs";
 import useProjectQuery from "../../hooks/useProjectQuery";
 import projectAPI from "../../api/projectAPI";
+import { useNavigate, useParams } from "react-router-dom";
 
 TaskDetailModal.propTypes = {};
 
@@ -28,14 +29,11 @@ function TaskDetailModal({ taskItemData }) {
     title,
     description,
     subTask,
-    labels,
     date,
     _id,
     project,
-    isOverdue,
     priority,
   } = taskItemData;
-
   const dispatch = useDispatch();
   const priorityOptions = [
     {
@@ -51,6 +49,8 @@ function TaskDetailModal({ taskItemData }) {
       label: `🟢 Priority 3`,
     },
   ];
+  const params = useParams()
+  const navigate = useNavigate()
 
   const time = useCalculateTime(date);
   const [descriptionValue, setDescriptionValue] = useState(description);
@@ -74,13 +74,14 @@ function TaskDetailModal({ taskItemData }) {
 
   const textAearRef = useRef();
 
-  const projectQuery = useProjectQuery();
+  const projectQuery = useProjectQuery('leftMenu');
 
   const listProject = useMemo(() => {
     if (projectQuery.isLoading || projectQuery?.projects?.length === 0) return;
     return projectQuery.projects.map((item) => ({
       title: item.title,
       _id: item._id,
+      color : item.color
     }));
   }, [projectQuery]);
 
@@ -91,11 +92,9 @@ function TaskDetailModal({ taskItemData }) {
     ));
   };
 
-  const handleOk = () => {
-    dispatch(toggleModalTaskDetail(false));
-  };
-
   const handleCancel = () => {
+    const url = !params?.id ? `/app/project/all` : `/app/project/${params.id}`
+    navigate(url)
     dispatch(toggleModalTaskDetail(false));
     setDescriptionValue(description);
     setTitleValue(title);
@@ -260,7 +259,7 @@ function TaskDetailModal({ taskItemData }) {
             onClick={() => handleChangeProject(item.title)}
           >
             <div className="project-name-name ">
-              <div className="color-dot"></div>
+              <div style={{ backgroundColor: item.color }} className="color-dot"></div>
               <span className="cut-text">{item.title}</span>
             </div>
             <DownOutlined />
@@ -274,7 +273,7 @@ function TaskDetailModal({ taskItemData }) {
   const tasksMutation = useMutation({
     mutationFn: handleDoneTask,
     onSuccess: () => {
-      queryClient.invalidateQueries(["task"]);
+      queryClient.invalidateQueries(["task","project"]);
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Done"));
       dispatch(toggleModalTaskDetail(false));
@@ -291,7 +290,6 @@ function TaskDetailModal({ taskItemData }) {
       className="modal-task-detail-modal"
       maskStyle={{ backgroundColor: "rgba(0,0,0,50%)" }}
       open={isShowModalTaskDetail}
-      onOk={handleOk}
       onCancel={handleCancel}
       footer={null}
       closable

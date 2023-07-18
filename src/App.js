@@ -14,9 +14,10 @@ import AppHome from "./pages/AppHome";
 import TaskList from "./components/TaskList";
 import loginAPI from "./api/loginAPI";
 import Cookies from "js-cookie";
+import TaskDetailModal from "./components/TaskDetailModal";
 
 const { authIndex, signup, login } = loginRoute;
-const { appIndex, today, upcoming } = appRoute;
+const { appIndex, allTask } = appRoute;
 
 function App() {
   const navigate = useNavigate();
@@ -29,7 +30,7 @@ function App() {
         const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
         if (res.loggedIn) {
           Cookies.set("token", res.token);
-          navigate(`app/${today}`);
+          // navigate(`app/task/${allTask}`);
         }
       } catch (err) {
         console.log(err);
@@ -50,7 +51,7 @@ function App() {
         const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
         if (res.loggedIn) {
           Cookies.set("token", res.token);
-          navigate(`app/${today}`);
+          navigate(`app/${allTask}`);
         }
       } catch (err) {
         console.log(err);
@@ -67,9 +68,19 @@ function App() {
           <Route path={signup} element={<Login isLogin={false} />} />
         </Route>
         <Route path={appIndex} element={<AppHome />}>
-          <Route path={today} element={<TaskList />} />
-          <Route path={upcoming} element={<TaskList />} />
-          <Route path="*" element={<Navigate replace to={today} />} />
+          <Route path="project">
+            <Route path="all" element={<TaskList type="project" />}>
+              <Route path="task">
+                <Route path=":taskId" element={<TaskDetailModal />} />
+              </Route>
+            </Route>
+            <Route path=":id" element={<TaskList type="project" />}>
+              <Route path="task">
+                <Route path=":taskId" element={<TaskDetailModal />} />
+              </Route>
+            </Route>
+          </Route>
+          {/* <Route path="*" element={<Navigate replace to={allTask} />} /> */}
         </Route>
         <Route path="*" element={<Navigate replace to={`auth/${login}`} />} />
       </Routes>

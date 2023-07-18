@@ -1,6 +1,6 @@
 const appRoute = {
     appIndex : 'app/*',
-    today : 'today',
+    allTask : 'all',
     upcoming: 'upcoming'
 }
 
