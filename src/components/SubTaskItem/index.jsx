@@ -66,8 +66,7 @@ function SubTaskItem({ taskItemData, _id, subTask, project, subTaskId }) {
   const onDoneSubTaskMutation = useMutation({
     mutationFn: (type) => onDoneSubTask(type),
     onSuccess: () => {
-      queryClient.invalidateQueries(["task"]);
-      queryClient.invalidateQueries(["project"])
+      queryClient.invalidateQueries(["task","project"]);
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Update Sub-Task"));
       setTimeout(() => {

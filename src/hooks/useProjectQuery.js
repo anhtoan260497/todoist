@@ -11,11 +11,11 @@ const useProjectQuery = (type) => {
   const projectQuery = useQuery({
     queryKey: ["task","project"],
     queryFn: projectAPI.getAllProject,
+    refetchOnWindowFocus : false
   });
 
   const filterProject = () => {
     if (type === 'leftMenu') return projectQuery.data;
-    console.log(projectQuery.data)
     const tasks = projectQuery.data.filter((item) => item._id === params.id);
     if(tasks.length === 0) return projectQuery.data;
     const currentTasks = tasks[0].tasks;
@@ -32,7 +32,6 @@ const useProjectQuery = (type) => {
       if (type === "upcoming") projectTasks.upcoming.push(item);
     });
 
-    // console.log(projectQuery.data);
     return projectTasks;
   };
 
