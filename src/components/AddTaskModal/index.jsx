@@ -22,7 +22,7 @@ function AddTaskModal() {
   const [datePicker, setDatePicker] = useState(Date.now());
   const [priorityPicker, setPriorityPicker] = useState(0);
   const currentTime = useMemo(useCalculateTime, []);
-  const projectQuery = useProjectQuery();
+  const projectQuery = useProjectQuery("leftMenu");
   const params = useParams();
 
   const priorityOptions = [
@@ -40,6 +40,20 @@ function AddTaskModal() {
     },
   ];
 
+  const [selectedProject, setSelectedProject] = useState();
+  const projectList = useMemo(() => {
+    if (projectQuery.isLoading) return [];
+    const projectListOptions = [];
+    // eslint-disable-next-line array-callback-return
+    projectQuery.projects.map((item) => {
+      projectListOptions.push({
+        value: item._id,
+        label: item.title,
+      });
+    });
+    return projectListOptions;
+  }, [projectQuery.isLoading, projectQuery.projects]);
+  
   const submitTask = async () => {
     const projectIdx = projectQuery.projects.findIndex(
       (item) => item._id === params.id
@@ -49,12 +63,14 @@ function AddTaskModal() {
       title: taskName,
       description: description,
       subTask: [],
-      project: projectQuery.projects[projectIdx].title,
+      project:
+      selectedProject?.label || projectQuery?.projects?.[projectIdx]?.title,
       date: datePicker,
       priority: priorityPicker,
     };
-    const project = projectQuery.projects[projectIdx].title;
-    const projectId = params.id;
+    const project =
+    selectedProject?.label || projectQuery?.projects?.[projectIdx]?.title
+    const projectId = selectedProject?.value ||params?.id;
 
     const res = await taskAPI.addTask({ newTask, project, projectId });
     setTaskName("");
@@ -68,13 +84,22 @@ function AddTaskModal() {
   const addTaskMutation = useMutation({
     mutationFn: submitTask,
     onSuccess: () => {
+      console.log("hi");
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Add task"));
-      queryClient.invalidateQueries(["task",]);
+      queryClient.invalidateQueries({ queryKey: ["task"] });
+      setTimeout(() => {
+        dispatch(setToastType(""));
+        dispatch(setToastMessage(""));
+      }, 1000);
     },
     onError: () => {
       dispatch(setToastType("error"));
       dispatch(setToastMessage("Fail, please try again "));
+      setTimeout(() => {
+        dispatch(setToastType(""));
+        dispatch(setToastMessage(""));
+      }, 1000);
     },
   });
 
@@ -85,7 +110,15 @@ function AddTaskModal() {
       setDatePicker(Date.now());
       setPriorityPicker(0);
     }
-  }, [isShowModalAddTask]);
+  }, [isShowModalAddTask]); // reset modal
+
+  useEffect(() => {
+    setSelectedProject({
+      label: projectList?.[0]?.label || "",
+      value:   projectList?.[0]?.value,
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [projectQuery.isLoading]); //update selected project
 
   const handleChangeTaskName = (e) => {
     setTaskName(e.target.value);
@@ -102,6 +135,11 @@ function AddTaskModal() {
 
   const handleChangePriority = (value) => {
     setPriorityPicker(value);
+  };
+
+  const handleChangeProject = (value) => {
+    const selectedProject = projectList.filter((item) => item.value === value);
+    setSelectedProject(selectedProject[0]);
   };
 
   return (
@@ -146,7 +184,19 @@ function AddTaskModal() {
             width: 120,
           }}
           onChange={handleChangePriority}
+          defaultValue={priorityOptions[0]}
           options={priorityOptions}
+          className="select-picker"
+          placeholder="Priority"
+        />
+
+        <Select
+          style={{
+            width: 120,
+          }}
+          defaultValue={projectList?.[0]?.value || ""}
+          onChange={handleChangeProject}
+          options={projectList}
           className="select-picker"
           placeholder="Priority"
         />

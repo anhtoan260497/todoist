@@ -39,6 +39,7 @@ function TaskListItem({ taskItemData, isOverdue }) {
   const taskDetailId = useSelector((state) => state.modalReducer.taskDetailId);
 
   const handleDoneTask = async () => {
+    console.log(project)
     const chooseTask = {
       projectName: project,
       _id,
@@ -61,7 +62,7 @@ function TaskListItem({ taskItemData, isOverdue }) {
       setTimeout(() => {
         dispatch(setToastType(""));
         dispatch(setToastMessage(""));
-      }, 2000);
+      }, 1000);
     },
   });
 

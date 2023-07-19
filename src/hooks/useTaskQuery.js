@@ -8,6 +8,7 @@ const useTaskQuery = () => {
   const taskQuery = useQuery({
     queryKey: ["task"],
     queryFn: taskAPI.getAllTask,
+    refetchOnWindowFocus: false
     
   });
 

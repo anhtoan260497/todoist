@@ -86,7 +86,6 @@ function TaskDetailModal({ taskItemData }) {
   }, [projectQuery]);
 
   const renderSubTask = () => {
-    console.log('hi')
     return subTask.map((item, idx) => (
       <SubTaskItem key={item._id} taskItemData={item} _id={_id} subTaskId={item._id} subTask={subTask} project={project} />
     ));
@@ -154,7 +153,7 @@ function TaskDetailModal({ taskItemData }) {
     mutationFn: ({ projectChange, date }) =>
       onUpdateProject({ projectChange, date }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["task"]);
+      queryClient.invalidateQueries(["task","project"]);
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Update Success"));
       setTimeout(() => {
@@ -273,7 +272,7 @@ function TaskDetailModal({ taskItemData }) {
   const tasksMutation = useMutation({
     mutationFn: handleDoneTask,
     onSuccess: () => {
-      queryClient.invalidateQueries(["task","project"]);
+      queryClient.invalidateQueries(["task"]);
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Done"));
       dispatch(toggleModalTaskDetail(false));

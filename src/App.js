@@ -43,7 +43,8 @@ function App() {
     )
       return;
     checkLoggedIn();
-  }, [navigate, location.pathname]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     setTimeout(async () => {
@@ -58,7 +59,8 @@ function App() {
         window.location = `http://localhost:3000/auth/login`;
       }
     }, 600000);
-  }, [navigate]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   return (
     <div className="App">
