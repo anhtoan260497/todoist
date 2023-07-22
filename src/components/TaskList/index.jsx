@@ -1,11 +1,11 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useState } from "react";
 import EmptyTaskToday from "../EmptyTaskToday";
 import "./styles.scss";
 import TaskListItem from "../TaskListItem";
 import useTaskQuery from "../../hooks/useTaskQuery";
 import { allTask } from "../../helper";
 import { CaretDownOutlined, CaretLeftOutlined } from "@ant-design/icons";
-import { useLocation, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import useProjectQuery from "../../hooks/useProjectQuery";
 
 function TaskList() {
@@ -49,9 +49,19 @@ function TaskList() {
     ));
   };
 
-  console.log(taskQuery.tasks)
+  const checkingRenderPart = useCallback(
+    (listTask, listProject) => {  
+      if (params.id && !projectQuery.isLoading) {
+        return listProject?.length > 0;
+      }
 
-
+      if (!params.id && !taskQuery.isLoading) {
+        return listTask?.length > 0;
+      }
+      return false;
+    },
+    [params.id, projectQuery.isLoading, taskQuery.isLoading]
+  );
 
   const checkingRenderComponent = useCallback(() => {
     if (params.id && !projectQuery.isLoading) {
@@ -74,7 +84,10 @@ function TaskList() {
     <div className="task-list-container ">
       {checkingRenderComponent() ? (
         <>
-          {taskQuery.tasks.overdue.length > 0 && (
+          {checkingRenderPart(
+            taskQuery?.tasks?.overdue,
+            projectQuery?.projects?.overdue
+          ) && (
             <div className="task-list-contain">
               <div
                 className="title"
@@ -91,7 +104,10 @@ function TaskList() {
             </div>
           )}
 
-          {taskQuery.tasks.today.length > 0 && (
+          {checkingRenderPart(
+            taskQuery?.tasks?.today,
+            projectQuery?.projects?.today
+          ) && (
             <div className="task-list-contain">
               <div
                 className="title"
@@ -108,7 +124,10 @@ function TaskList() {
             </div>
           )}
 
-          {taskQuery.tasks.upcoming.length > 0 && (
+          {checkingRenderPart(
+            taskQuery?.tasks?.upcoming,
+            projectQuery?.projects?.upcoming
+          ) && (
             <div className="task-list-contain">
               <div
                 className="title"

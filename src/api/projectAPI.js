@@ -12,6 +12,10 @@ const projectAPI = {
     addProject : ({color, project}) => {
         const url = `project/create`
         return axiosClient.post(url,{project,color})
+    },
+    removeProject  : ({title}) => {
+        const url = `project/delete`
+        return axiosClient.post(url,{title})
     }
 };
 

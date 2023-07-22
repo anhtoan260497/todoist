@@ -55,7 +55,7 @@ function Login({ isLogin }) {
     } catch (err) {
       dispatch(setIsLoading(false));
       dispatch(setToastType("error"));
-      dispatch(setToastMessage(err.response.data.status));
+      dispatch(setToastMessage(err.response.data.message));
       setTimeout(() => {
         dispatch(
           setToastType({
@@ -82,7 +82,7 @@ function Login({ isLogin }) {
       dispatch(setIsLoading(false))
     } catch (err) {
       dispatch(setToastType("error"));
-      dispatch(setToastMessage(err.response.data.status));
+      dispatch(setToastMessage(err.response.data.message));
       setTimeout(() => {
         dispatch(
           setToastType({

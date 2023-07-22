@@ -20,11 +20,11 @@ function AddTaskModal() {
   const [taskName, setTaskName] = useState("");
   const [description, setDescription] = useState("");
   const [datePicker, setDatePicker] = useState(Date.now());
-  const [priorityPicker, setPriorityPicker] = useState(0);
+  const [priorityPicker, setPriorityPicker] = useState(2);
   const currentTime = useMemo(useCalculateTime, []);
+  const [selectedProject, setSelectedProject] = useState();
   const projectQuery = useProjectQuery("leftMenu");
   const params = useParams();
-
   const priorityOptions = [
     {
       value: 1,
@@ -40,7 +40,6 @@ function AddTaskModal() {
     },
   ];
 
-  const [selectedProject, setSelectedProject] = useState();
 
   const projectList = useMemo(() => {
     if (projectQuery.isLoading) return [];
@@ -76,7 +75,7 @@ function AddTaskModal() {
     setTaskName("");
     setDescription("");
     setDatePicker(Date.now());
-    setPriorityPicker(0);
+    setPriorityPicker(priorityPicker);
     dispatch(toggleModalAddTask(false));
     return res;
   };
@@ -84,7 +83,6 @@ function AddTaskModal() {
   const addTaskMutation = useMutation({
     mutationFn: submitTask,
     onSuccess: () => {
-      console.log("hi");
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Add task"));
       queryClient.invalidateQueries({ queryKey: ["task"] });
@@ -108,17 +106,9 @@ function AddTaskModal() {
       setTaskName("");
       setDescription("");
       setDatePicker(Date.now());
-      setPriorityPicker(0);
+      setPriorityPicker(2);
     }
-  }, [isShowModalAddTask]); // reset modal
-
-  useEffect(() => {
-    setSelectedProject({
-      label: projectList?.[0]?.label || "",
-      value:   projectList?.[0]?.value,
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [projectQuery.isLoading]); //update selected project
+  }, [isShowModalAddTask]); // reset modal  
 
   const handleChangeTaskName = (e) => {
     setTaskName(e.target.value);
@@ -137,6 +127,7 @@ function AddTaskModal() {
     setPriorityPicker(value);
   };
 
+
   const handleChangeProject = (value) => {
     const selectedProject = projectList.filter((item) => item.value === value);
     setSelectedProject(selectedProject[0]);
@@ -148,7 +139,7 @@ function AddTaskModal() {
       open={isShowModalAddTask}
       onOk={() => addTaskMutation.mutate()}
       onCancel={() => dispatch(toggleModalAddTask(false))}
-      okButtonProps={{ disabled: taskName.length === 0 }}
+      okButtonProps={{ disabled: taskName.length === 0 || !selectedProject?.value}}
       okText="Add Task"
     >
       <input
@@ -184,7 +175,7 @@ function AddTaskModal() {
             width: 120,
           }}
           onChange={handleChangePriority}
-          defaultValue={priorityOptions[0]}
+          defaultValue={priorityOptions[priorityPicker].label}
           options={priorityOptions}
           className="select-picker"
           placeholder="Priority"
@@ -194,11 +185,10 @@ function AddTaskModal() {
           style={{
             width: 120,
           }}
-          defaultValue={selectedProject?.[0]?.value || ""}
           onChange={handleChangeProject}
           options={projectList}
           className="select-picker"
-          placeholder="Priority"
+          placeholder="Project"
         />
       </div>
     </Modal>

@@ -57,7 +57,7 @@ function MenuLeft() {
     >
       <div className="menu-navigate">
         <Link
-          to={`project/${allTask}`}
+          to={`${allTask}`}
           className={clsx(
             "navigate-item",
             isCurrentRoute(allTask) && "active-link"

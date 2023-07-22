@@ -1,20 +1,17 @@
-import React, { useMemo, useState } from "react";
-import PropTypes from "prop-types";
+import React from "react";
 import "./styles.scss";
 import { PlusOutlined } from "@ant-design/icons";
 import AddTaskModal from "../AddTaskModal";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { toggleModalAddProject, toggleModalAddTask } from "../../features/modal/modalSlice";
 import useCalculateToday from "../../hooks/useCalculateTime";
 import useProjectQuery from "../../hooks/useProjectQuery";
 
-TaskAreaHeader.propTypes = {};
-
 function TaskAreaHeader() {
   const dispatch = useDispatch();
   const dateObj = useCalculateToday();
-  const projectQuery = useProjectQuery("menuLeft");
-
+  const projectQuery = useProjectQuery('leftMenu');
+  
   return (
     <div className="task-area-header">
       <div className="header-today">
@@ -22,7 +19,7 @@ function TaskAreaHeader() {
           <h3 className="title">Today</h3>
           <p className="description">{`${dateObj.shortWeekdays} ${dateObj.date} ${dateObj.shortMonths}`}</p>
         </div>
-        {!projectQuery?.isLoading && projectQuery?.projects.length > 0 ? (
+        {!projectQuery?.isLoading && (Object.values(projectQuery.projects)).flat(1).length > 0 ? (
           <div
             className="new-task"
             onClick={() => dispatch(toggleModalAddTask(true))}

@@ -19,7 +19,7 @@ import {
   setTaskDetailId,
   toggleModalTaskDetail,
 } from "../../features/modal/modalSlice";
-import { Link, Outlet, useParams } from "react-router-dom";
+import { Link, useParams } from "react-router-dom";
 
 TaskListItem.propTypes = {
   taskItemData: PropTypes.object.isRequired,
@@ -39,7 +39,6 @@ function TaskListItem({ taskItemData, isOverdue }) {
   const taskDetailId = useSelector((state) => state.modalReducer.taskDetailId);
 
   const handleDoneTask = async () => {
-    console.log(project)
     const chooseTask = {
       projectName: project,
       _id,
