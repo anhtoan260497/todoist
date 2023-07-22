@@ -41,6 +41,7 @@ function AddTaskModal() {
   ];
 
   const [selectedProject, setSelectedProject] = useState();
+
   const projectList = useMemo(() => {
     if (projectQuery.isLoading) return [];
     const projectListOptions = [];
@@ -58,7 +59,6 @@ function AddTaskModal() {
     const projectIdx = projectQuery.projects.findIndex(
       (item) => item._id === params.id
     );
-
     const newTask = {
       title: taskName,
       description: description,
@@ -194,7 +194,7 @@ function AddTaskModal() {
           style={{
             width: 120,
           }}
-          defaultValue={projectList?.[0]?.value || ""}
+          defaultValue={selectedProject?.[0]?.value || ""}
           onChange={handleChangeProject}
           options={projectList}
           className="select-picker"

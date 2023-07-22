@@ -26,6 +26,7 @@ function App() {
   //check loggedIn ->  if true : go to app page -> if false redirect to signin page
   useEffect(() => {
     const checkLoggedIn = async () => {
+      console.log('hi')
       try {
         const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
         if (res.loggedIn) {
@@ -34,7 +35,7 @@ function App() {
         }
       } catch (err) {
         console.log(err);
-        window.location = `http://localhost:3000/auth/login`;
+        window.location = `${process.env.REACT_APP_TODOIST_MAIN}auth/login`;
       }
     };
     if (
@@ -47,6 +48,7 @@ function App() {
   }, []);
 
   useEffect(() => {
+    console.log('hi')
     setTimeout(async () => {
       try {
         const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
@@ -56,7 +58,7 @@ function App() {
         }
       } catch (err) {
         console.log(err);
-        window.location = `http://localhost:3000/auth/login`;
+        window.location = `${process.env.REACT_APP_TODOIST_MAIN}auth/login`;
       }
     }, 600000);
   // eslint-disable-next-line react-hooks/exhaustive-deps

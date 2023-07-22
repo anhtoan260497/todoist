@@ -39,19 +39,21 @@ function Login({ isLogin }) {
   const loginSubmit = async (data) => {
     try {
       dispatch(setIsLoading(true));
-      let loginData = {
+      const loginData = {
         email: data.email,
         password: data.password,
       };
       const res = await loginAPI.login(loginData);
       if (res.loggedIn) {
         Cookies.set("token", res.token);
+        Cookies.set("email",loginData.email)
         dispatch(setToastType("success"));
         dispatch(setToastMessage("Success"));
-        window.location = `http://localhost:3000/app/project/all`;
+        window.location = `${process.env.REACT_APP_TODOIST_MAIN}app/project/all`;
       }
       dispatch(setIsLoading(false));
     } catch (err) {
+      dispatch(setIsLoading(false));
       dispatch(setToastType("error"));
       dispatch(setToastMessage(err.response.data.status));
       setTimeout(() => {
@@ -61,7 +63,6 @@ function Login({ isLogin }) {
           })
         );
       }, 500);
-      dispatch(setIsLoading(false));
     }
   };
 
@@ -71,14 +72,14 @@ function Login({ isLogin }) {
       password: data.password,
     };
     try {
-      setIsLoading(true)
+      dispatch(setIsLoading(true))
       const res = await loginAPI.createAccount(registerData)
       if(res.status === 200) {
         dispatch(setToastType("success"));
         dispatch(setToastMessage(res.message));
         navigate('/auth/login')
       }
-      setIsLoading(false)
+      dispatch(setIsLoading(false))
     } catch (err) {
       dispatch(setToastType("error"));
       dispatch(setToastMessage(err.response.data.status));
@@ -89,7 +90,7 @@ function Login({ isLogin }) {
           })
         );
       }, 500);
-      dispatch(setIsLoading(false));
+      dispatch(setIsLoading(false))
     }
   }
 

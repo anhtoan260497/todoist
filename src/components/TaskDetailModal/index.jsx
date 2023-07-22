@@ -153,7 +153,7 @@ function TaskDetailModal({ taskItemData }) {
     mutationFn: ({ projectChange, date }) =>
       onUpdateProject({ projectChange, date }),
     onSuccess: () => {
-      queryClient.invalidateQueries(["task","project"]);
+      queryClient.invalidateQueries(["task"]);
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Update Success"));
       setTimeout(() => {
