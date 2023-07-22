@@ -4,8 +4,8 @@
     display: flex;
     align-items: center;
     margin-left: 5px;
-    gap : 10px;
-    padding : 10px;
+    gap: 10px;
+    padding: 10px;
     cursor: pointer;
     border-radius: 5px;
     margin: 5px 0;
@@ -24,27 +24,34 @@
     .project-title {
         font-size: 14px;
         width: 80%;
-        color : #878787;
+        color: #878787;
     }
 
     .quantity {
         font-size: 12px;
-        color : #878787;
+        color: #878787;
         position: absolute;
         opacity: 1;
-        transition: opacity .3s ease;
+        transition: opacity 0.3s ease;
         right: 8px;
-        
     }
 
     .edit-icons-container {
         display: flex;
-        gap : 4px;
-        color : #878787;
+        gap: 4px;
+        color: #878787;
         font-size: 12px;
         align-items: center;
         opacity: 0;
-        transition: opacity .3s ease;
+        transition: opacity 0.3s ease;
+
+        .icon {
+            font-size: 16px;
+
+            &:hover {
+                color: black;
+            }
+        }
     }
 
     &:hover {
@@ -52,12 +59,12 @@
 
         .quantity {
             opacity: 0;
-            transition: opacity .3s ease;
+            transition: opacity 0.3s ease;
         }
 
         .edit-icons-container {
             opacity: 1;
-            transition: opacity .3s ease;
+            transition: opacity 0.3s ease;
         }
     }
 }

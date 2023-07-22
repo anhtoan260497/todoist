@@ -20,7 +20,7 @@ const taskAPI = {
   addTask : ({newTask,project,projectId}) => {
     const url = '/task/add'
     return axiosClient.post(url,{newTask,project,projectId})
-  }
+  },
 };
 
 export default taskAPI;

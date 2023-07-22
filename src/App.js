@@ -26,7 +26,6 @@ function App() {
   //check loggedIn ->  if true : go to app page -> if false redirect to signin page
   useEffect(() => {
     const checkLoggedIn = async () => {
-      console.log('hi')
       try {
         const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
         if (res.loggedIn) {
@@ -48,7 +47,6 @@ function App() {
   }, []);
 
   useEffect(() => {
-    console.log('hi')
     setTimeout(async () => {
       try {
         const res = await loginAPI.checkLoggedIn(Cookies.get("token"));
