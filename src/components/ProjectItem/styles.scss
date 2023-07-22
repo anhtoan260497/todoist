@@ -9,9 +9,7 @@
     cursor: pointer;
     border-radius: 5px;
     margin: 5px 0;
-    &:hover {
-        background-color: rgba(218, 218, 218, 0.4);
-    }
+    position: relative;
 
     .active-item {
         background-color: rgba(218, 218, 218, 0.4);
@@ -31,7 +29,36 @@
 
     .quantity {
         font-size: 12px;
-        color : #878787
+        color : #878787;
+        position: absolute;
+        opacity: 1;
+        transition: opacity .3s ease;
+        right: 8px;
+        
+    }
+
+    .edit-icons-container {
+        display: flex;
+        gap : 4px;
+        color : #878787;
+        font-size: 12px;
+        align-items: center;
+        opacity: 0;
+        transition: opacity .3s ease;
+    }
+
+    &:hover {
+        background-color: rgba(218, 218, 218, 0.4);
+
+        .quantity {
+            opacity: 0;
+            transition: opacity .3s ease;
+        }
+
+        .edit-icons-container {
+            opacity: 1;
+            transition: opacity .3s ease;
+        }
     }
 }
 

@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import EmptyTaskToday from "../EmptyTaskToday";
 import "./styles.scss";
 import TaskListItem from "../TaskListItem";
@@ -18,7 +18,7 @@ function TaskList() {
 
   const renderOverdueTaskList = () => {
     if (params.id && !projectQuery.isLoading) {
-     return projectQuery.projects.overdue.map((item, key) => (
+      return projectQuery.projects.overdue.map((item, key) => (
         <TaskListItem key={key} taskItemData={item} />
       ));
     }
@@ -26,10 +26,10 @@ function TaskList() {
       <TaskListItem key={key} taskItemData={item} />
     ));
   };
-  
+
   const renderTodayTaskList = () => {
     if (params.id && !projectQuery.isLoading) {
-     return projectQuery.projects.today.map((item, key) => (
+      return projectQuery.projects.today.map((item, key) => (
         <TaskListItem key={key} taskItemData={item} />
       ));
     }
@@ -49,9 +49,30 @@ function TaskList() {
     ));
   };
 
+  console.log(taskQuery.tasks)
+
+
+
+  const checkingRenderComponent = useCallback(() => {
+    if (params.id && !projectQuery.isLoading) {
+      if (Object.values(projectQuery.projects).flat(1).length > 0) return true;
+      return false;
+    }
+
+    if (Object.values(taskQuery.tasks).flat(1).length > 0) {
+      return true;
+    }
+    return false;
+  }, [
+    params.id,
+    projectQuery.isLoading,
+    projectQuery.projects,
+    taskQuery.tasks,
+  ]);
+
   return (
     <div className="task-list-container ">
-      {!taskQuery.isLoading && allTask(taskQuery.tasks).length > 0 ? (
+      {checkingRenderComponent() ? (
         <>
           {taskQuery.tasks.overdue.length > 0 && (
             <div className="task-list-contain">

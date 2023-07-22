@@ -1,7 +1,6 @@
 const appRoute = {
     appIndex : 'app/*',
-    allTask : 'all',
-    upcoming: 'upcoming'
+    allTask : 'project/all',
 }
 
 export default appRoute

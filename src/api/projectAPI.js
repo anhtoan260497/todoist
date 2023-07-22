@@ -8,6 +8,10 @@ const projectAPI = {
     updateProject : (project) => {
         const url = `project/update`
         return axiosClient.post(url,{project})
+    },
+    addProject : ({color, project}) => {
+        const url = `project/create`
+        return axiosClient.post(url,{project,color})
     }
 };
 

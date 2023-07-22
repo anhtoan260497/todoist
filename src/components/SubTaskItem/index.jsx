@@ -33,7 +33,7 @@ function SubTaskItem({ taskItemData, _id, subTask, project, subTaskId }) {
 
   const handleChangeValue = useCallback((e) => {
     setDescriptionValue(e.target.value);
-  }, []);
+  }, []); 
 
   const handleChangeTitleValue = useCallback((e) => {
     setTitleValue(e.target.value);
@@ -66,7 +66,7 @@ function SubTaskItem({ taskItemData, _id, subTask, project, subTaskId }) {
   const onDoneSubTaskMutation = useMutation({
     mutationFn: (type) => onDoneSubTask(type),
     onSuccess: () => {
-      queryClient.invalidateQueries(["task","project"]);
+      queryClient.invalidateQueries(["task"]);
       dispatch(setToastType("success"));
       dispatch(setToastMessage("Update Sub-Task"));
       setTimeout(() => {
@@ -93,7 +93,7 @@ function SubTaskItem({ taskItemData, _id, subTask, project, subTaskId }) {
         onMouseEnter={() => setOnHoverItem(true)}
         onMouseLeave={() => setOnHoverItem(false)}
       >
-        <Tooltip title="Check done">
+        <Tooltip title={!isDone ? 'Check done' : "Remove check done"}>
           <button
             className="check-button"
             onClick={() => onDoneSubTaskMutation.mutate("check")}
