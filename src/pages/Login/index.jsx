@@ -105,9 +105,9 @@ function Login({ isLogin }) {
         <Toast type={toastType} />
         <div className="login-area">
           <Title level={2}>{!isLogin ? "Sign up" : "Login"}</Title>
-          <SocialLoginButton type="facebook" />
+          {/* <SocialLoginButton type="facebook" />
           <SocialLoginButton type="google" />
-          <SocialLoginButton type="apple" />
+          <SocialLoginButton type="apple" /> */}
 
           <form onSubmit={isLogin  ? handleSubmit(loginSubmit) : handleSubmit(registerSubmit)}>
             <div className="input-area">
