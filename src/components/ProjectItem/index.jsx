@@ -68,12 +68,6 @@ function ProjectItem({ color, title, quantity, id }) {
         <p className="quantity">{quantity}</p>
 
         <div className="edit-icons-container">
-          <Tooltip title="Edit Project Name">
-            <EditOutlined
-              className="icon"
-              onClick={() => dispatch(setIsShowDeleteProjectModal(true))}
-            />
-          </Tooltip>
           <Tooltip title="Delete Project">
             <CloseCircleOutlined
               className="icon"
